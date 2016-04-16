@@ -13,6 +13,8 @@ import random
 
 import sys
 
+import pygame
+
 class ScoutRobo(object):
 
     def __init__(self):
@@ -24,13 +26,21 @@ class ScoutRobo(object):
 
         self.cannon = Motor(self.brick, PORT_C)
 
-        #self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
+        self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
         self.sensor_touch_left = Touch(self.brick, PORT_2)
         self.sensor_touch_right = Touch(self.brick, PORT_1)
         #self.sensor_light_color = Light(self.brick, PORT_4)
 
         self.touch_right = False
         self.touch_left = False
+
+        self.transitions = []
+
+        self.running = False
+
+        self.playing_march = False
+
+        self.curr_time = time.time()
 
         self.freqs = {            
             'A0' : 220,
@@ -88,6 +98,77 @@ class ScoutRobo(object):
         self.play_march()
         self.play_schland()
 
+
+    def run_gamepad(self):
+        pygame.init()
+
+        pygame.joystick.init()
+
+        done = False
+        while not done:
+            print 'pad-mode...'
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+                if event.type == pygame.JOYBUTTONDOWN:
+                    print 'buttton pressed'
+                if event.type == pygame.JOYBUTTONUP:
+                    print 'buttton released'
+            pad_count = pygame.joystick.get_count()
+            for i in range(pad_count):
+                pad = pygame.joystick.Joystick(i)
+                pad.init()
+
+                button_a = pad.get_button(0)
+                button_b = pad.get_button(1)
+                button_x = pad.get_button(2)
+                button_y = pad.get_button(3)
+                print button_a
+
+                if button_a:
+                    if not self.playing_march:
+                        thread.start_new_thread(self.play_march,())
+                if button_b:
+                    self.fire_cannon()
+                if button_x:
+                    print 'button_x'
+                    if not self.running:
+                        self.running = True
+                        thread.start_new_thread(self.run,())
+                if button_y:
+                    if self.running:
+                        self.running = False
+
+
+                front = pad.get_axis(4)
+                turn = pad.get_axis(3)
+                turn = round(turn, 2)
+                front = round(front, 2)
+
+                print turn, front
+
+                if not self.running:
+                    if front < -0.1:
+                        #robo.go_forward(ftime = 0.2)
+                        robo.go_pad(power = -65 + 62 * front)
+                    if front > 0.1:
+                        #robo.go_backward(ftime = 0.2)
+                        robo.go_pad(power = 65 + 62 * front)
+                    if turn < -0.2:
+                        #robo.turn_left(ftime = 0.2)
+                        robo.turn_pad(power = -65 + 62 * turn)
+                    if turn > 0.2:
+                        robo.turn_pad(power = 65 + 62 * turn)
+                        #robo.turn_right(ftime = 0.2)
+
+                    if abs(front) < 0.1:
+                        self.stop()
+                        continue
+                    if abs(turn) < 0.1:
+                        self.stop()
+                        continue
+
+
     def run(self):
         '''
         self.t_left_thread = threading.Thread(
@@ -95,27 +176,33 @@ class ScoutRobo(object):
             args = (0.1,)
         )
         self.t_left_thread.start()
-
-        self.t_right_thread = threading.Thread(
-            target = self.get_touch_right,
-            args = (0.1,)
-        )
-        self.t_right_thread.start()
         '''
-        #thread.start_new_thread(self.get_touch_left,(0.1,))
-        #thread.start_new_thread(self.get_touch_right,(0.1,))
-        thread.start_new_thread(self.play_march,())
-        #thread.start_new_thread(self.get_light,(0.1,))
+        #thread.start_new_thread(self.play_march,())
         self.state = 'normal'
-        self.curr_takt = 1
-        seconds = 10
-        ctime = 0
-        while True:
+
+        # main loop
+        while self.running:
+
+            # get sensor data
             self.touch_left = self.sensor_touch_left.get_sample()
             self.touch_right = self.sensor_touch_right.get_sample()
-            #ctime += 0.5
-            if ctime > seconds:
-                break
+
+            self.distance = self.sensor_ultrasonic.get_sample()
+
+            #print self.distance
+            print self.motor_left.get_tacho()
+            print self.motor_right.get_tacho()
+
+            self.curr_time = time.time()
+
+            self.check_transitions()
+
+            if not self.playing_march:
+                number = random.randint(0, 400)
+                if number == 88:
+                    print 'playing march now...'
+                    #thread.start_new_thread(self.play_march,())
+
             if self.state == 'normal':
                 self.go_forward_forever()
                 
@@ -125,26 +212,87 @@ class ScoutRobo(object):
                 if self.touch_right:
                     print 'right'
                     self.state = 'touch_right'
+                if self.distance < 8:
+                    print 'front'
+                    self.state = 'front'
+
+            elif self.state == 'front':
+                self.stop()
+                self.transitions.append(('front', time.time()))
+                self.go_backward(ftime = 1.5)
+                if random.randint(0, 1):
+                    self.turn_right(ftime = 0.4)
+                else:
+                    self.turn_left(ftime = 0.4)
+                self.state = 'normal'
                 
             elif self.state == 'touch_left':
                 self.stop()
+                self.transitions.append(('touch_left', time.time()))
                 self.go_backward(ftime = 1)
                 self.turn_right(ftime = 0.4)
                 self.state = 'normal'
+
             elif self.state == 'touch_right':
                 self.stop()
+                self.transitions.append(('touch_right', time.time()))
                 self.go_backward(ftime = 1)
                 self.turn_left(ftime = 0.4)
                 self.state = 'normal'
-            #print self.state
-            #time.sleep(0.5)
-            print 'Running in {} state...'.format(self.state)
+
+
+
+            #print 'Running in {} state...'.format(self.state)
         self.stop()
 
+
+    def check_transitions(self):
+
+        counter = 0
+
+        # check if latest transition if older than 10 seconds
+        if self.transitions:
+            last_trans = self.transitions[-1]
+            diff = self.curr_time - last_trans[1] 
+            if diff > 10:
+                self.transitions = []
+                return
+
+        # count transitions in last 10 seconds
+        for trans in self.transitions:
+            trans_time = trans[1]
+            diff = self.curr_time - trans_time
+            if diff < 10:
+                counter += 1
+
+        # lots of transitions found, cry for help...
+        if counter > 3:
+            print 'CRYING FOR HELP NOW!!!'
+            self.play_schland()
+            self.transitions = []
+            self.running = False
 
     def go_forward_forever(self, power = 80):
         for motor in self.motors:
             motor.run(power)
+
+    def go_backward_forever(self, power = 80):
+        for motor in self.motors:
+            motor.run(-power)
+
+    def turn_left_forever(self, power=80, ftime=1):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(-power)
+            elif motor == self.motor_right:
+                motor.run(power)
+
+    def turn_right_forever(self, power=80, ftime=1):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(power)
+            elif motor == self.motor_right:
+                motor.run(-power)
 
     def stop(self):
         self.get_data = False
@@ -204,6 +352,7 @@ class ScoutRobo(object):
             self.brick.play_tone_and_wait(self.freqs['GIS3'], 4*v)
 
     def play_march(self, v = 150, times = 1):
+        self.playing_march = True
         for i in range(times):
             self.brick.play_tone_and_wait(self.freqs['G0'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G0'], 4*v)
@@ -282,6 +431,8 @@ class ScoutRobo(object):
             self.brick.play_tone_and_wait(self.freqs['DIS0'], 3*v)
             self.brick.play_tone_and_wait(self.freqs['B1'], v)
             self.brick.play_tone_and_wait(self.freqs['G0'], 8*v)
+
+        self.playing_march = False
 
     def play_schland(self, v = 150, times = 1):
         #schland
@@ -375,6 +526,17 @@ class ScoutRobo(object):
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 8*v)
 
+    def go_pad(self, power=80):
+        for motor in self.motors:
+            motor.run(-power)
+
+    def turn_pad(self, power=80):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(power)
+            elif motor == self.motor_right:
+                motor.run(-power)
+
     def go_forward(self, power=80, ftime=1):
         for motor in self.motors:
             motor.run(power)
@@ -444,6 +606,8 @@ if __name__ == '__main__':
     #robo.test()
     if len(sys.argv) > 1:
         mode = sys.argv[1]
+    else:
+        mode = None
     if mode == 'run':
         try:
             robo.run()
@@ -452,3 +616,9 @@ if __name__ == '__main__':
             robo.stop()
     elif mode == 'test':
         robo.test()
+    elif mode == 'pad':
+        try:
+            robo.run_gamepad()
+        except:
+            print 'pad-mode died...'
+            robo.stop()
