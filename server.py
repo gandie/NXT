@@ -7,6 +7,7 @@ import json
 import cgi
 
 from robo import ScoutRobo
+from lib.nxt_player import Nxt_Player
 
 HOST_NAME = ''
 PORT_NUMBER = 14242
@@ -22,6 +23,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
+
         args = {}
         idx = s.path.find('?')
         if idx >= 0:
@@ -33,21 +35,64 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if 'nxt' in rpath:
             if 'command' in args.keys():
                 command = args['command'][0]
+                ftime = float(args['ftime'][0])
+                print("#####################################################------------")
                 print command
-                if command == 'go':
-                    s.wfile.write("Fahre...")
-                    test_robo()
+                print ftime
+                if (command == 'go_forward'):
+                    s.wfile.write("Vorwaerts fahren..")
+                    music()
+                    go_forward(ftime)
                     return
+                elif command == 'go_backward':
+                	s.wfile.write("Rueckwaerts fahren..")
+                	go_backward(ftime)
+                	return
+                elif command == 'turn_left':
+                    s.wfile.write("Links drehen..")
+                    turn_left(ftime)
+                    return
+                elif command == 'turn_right':
+                	s.wfile.write("Rechts drehen..")
+                	turn_right(ftime)
+                	return
                 else:
                     s.wfile.write("Das dumm.")
                     return
 
-        s.wfile.write("Nein.")
+        s.wfile.write("Argumente unbekannt \
+					<form action='nxt' method='get'> \
+                        <input type='text' name='command' placeholder='Befehl'>\
+                        <input type='text' name='ftime' placeholder='Zeit[s]'>\
+                        <input type='submit' value='Abschicken'>\
+                    </form>")
 
-def test_robo():
-    print 'testing...'
-    robo.go_forward(ftime = 1)
 
+# commands
+def go_forward(ftime):
+    print("Go forward..")
+    robo.go_forward(ftime = ftime)
+
+def go_backward(ftime):
+	print("Go back..")
+	robo.go_backward(ftime = ftime)
+
+def turn_left(ftime):
+    print("Turn right..")
+    robo.turn_left(ftime = ftime)
+
+def turn_right(ftime):
+	print("Turn left..")
+	robo.turn_right(ftime = ftime)
+
+def music():
+    if not self.player.playing_song:
+        number = random.randint(0, 400)
+        if number == 88:
+            thread.start_new_thread(self.player.play_song,())
+
+
+# Startpunkt
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
