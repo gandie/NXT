@@ -44,16 +44,16 @@ class ScoutRobo(object):
         self.motor_left = Motor(self.brick, PORT_A)
         self.motor_right = Motor(self.brick, PORT_B)
         self.motors = [self.motor_left, self.motor_right]
-        self.cannon = Motor(self.brick, PORT_C)
+        ##self.cannon = Motor(self.brick, PORT_C)
 
         # initialize sensors
-        self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
-        self.sensor_touch_left = Touch(self.brick, PORT_2)
-        self.sensor_touch_right = Touch(self.brick, PORT_1)
+        #self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
+        #self.sensor_touch_left = Touch(self.brick, PORT_2)
+        #self.sensor_touch_right = Touch(self.brick, PORT_1)
         #self.sensor_light_color = Light(self.brick, PORT_4)
 
         # initialize music
-        self.player = Nxt_Player(self.brick)
+        #self.player = Nxt_Player(self.brick)
 
         # initialize some vars used for auto-pilot
         self.touch_right = False
@@ -164,7 +164,6 @@ class ScoutRobo(object):
         auto-pilot mode, driving arround, scouting area
         TODO: implement navigation-voodoo
         '''
-
         self.state = init_state
 
         # main loop
@@ -262,7 +261,6 @@ class ScoutRobo(object):
             motor.run(-power)
 
     def stop(self):
-        self.get_data = False
         for motor in self.motors:
             motor.idle()
 
@@ -301,6 +299,13 @@ class ScoutRobo(object):
         for motor in self.motors:
             motor.idle()
 
+    def turn_left_forever(self, power=80):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(-power)
+            elif motor == self.motor_right:
+                motor.run(power)
+
     def turn_right(self, power=80, ftime=1):
         for motor in self.motors:
             if motor == self.motor_left:
@@ -310,6 +315,13 @@ class ScoutRobo(object):
         time.sleep(ftime)
         for motor in self.motors:
             motor.idle()
+
+    def turn_right_forever(self, power=80):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(power)
+            elif motor == self.motor_right:
+                motor.run(-power)
 
     def fire_cannon(self, balls=1):
         self.cannon.turn(127,360*balls)
@@ -324,6 +336,7 @@ if __name__ == '__main__':
         mode = None
     if mode == 'run':
         try:
+            robo.running = True
             robo.run()
         except Exception as e:
             print e
