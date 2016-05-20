@@ -48,8 +48,8 @@ class ScoutRobo(object):
 
         # initialize sensors
         #self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
-        #self.sensor_touch_left = Touch(self.brick, PORT_2)
-        #self.sensor_touch_right = Touch(self.brick, PORT_1)
+        self.sensor_touch_left = Touch(self.brick, PORT_2)
+        self.sensor_touch_right = Touch(self.brick, PORT_1)
         #self.sensor_light_color = Light(self.brick, PORT_4)
 
         # initialize music
@@ -65,6 +65,8 @@ class ScoutRobo(object):
         # limits used by check_transitions
         self.transition_count = 3
         self.transition_time = 10
+
+        self.locked = False
 
     def test(self):
         '''
@@ -252,6 +254,18 @@ class ScoutRobo(object):
             self.transitions = []
             self.running = False
 
+    def check_collision(self):
+        self.touch_left = self.sensor_touch_left.get_sample()
+        self.touch_right = self.sensor_touch_right.get_sample()
+
+        if self.touch_left or self.touch_right:
+            return True
+        
+        return False
+
+    def unlock(self):
+        self.locked = False
+
     def go_forward_forever(self, power = 80):
         for motor in self.motors:
             motor.run(power)
@@ -276,26 +290,62 @@ class ScoutRobo(object):
                 motor.run(-power)
 
     def go_forward(self, power=80, ftime=1):
+        if self.locked:
+            return
         for motor in self.motors:
             motor.run(power)
-        time.sleep(ftime)
+
+        start = time.time()
+        while True:
+            now = time.time()
+            if (now - start) > ftime:
+                break
+            if self.check_collision():
+                self.stop()
+                self.locked = True
+                return
+
         for motor in self.motors:
             motor.idle()
 
     def go_backward(self, power=80, ftime=1):
+        if self.locked:
+            return
         for motor in self.motors:
             motor.run(-power)
-        time.sleep(ftime)
+
+        start = time.time()
+        while True:
+            now = time.time()
+            if (now - start) > ftime:
+                break
+            if self.check_collision():
+                self.stop()
+                self.locked = True
+                return
+
         for motor in self.motors:
             motor.idle()
 
     def turn_left(self, power=80, ftime=1):
+        if self.locked:
+            return
         for motor in self.motors:
             if motor == self.motor_left:
                 motor.run(-power)
             elif motor == self.motor_right:
                 motor.run(power)
-        time.sleep(ftime)
+        #time.sleep(ftime)
+        start = time.time()
+        while True:
+            now = time.time()
+            if (now - start) > ftime:
+                break
+            if self.check_collision():
+                self.stop()
+                self.locked = True
+                return
+
         for motor in self.motors:
             motor.idle()
 
@@ -307,12 +357,24 @@ class ScoutRobo(object):
                 motor.run(power)
 
     def turn_right(self, power=80, ftime=1):
+        if self.locked:
+            return
         for motor in self.motors:
             if motor == self.motor_left:
                 motor.run(power)
             elif motor == self.motor_right:
                 motor.run(-power)
-        time.sleep(ftime)
+        #time.sleep(ftime)
+        start = time.time()
+        while True:
+            now = time.time()
+            if (now - start) > ftime:
+                break
+            if self.check_collision():
+                self.stop()
+                self.locked = True
+                return
+
         for motor in self.motors:
             motor.idle()
 

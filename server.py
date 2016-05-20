@@ -68,7 +68,9 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 elif command == 'turn_right_forever':
                     turn_right_forever()
                     s.wfile.write("Done")
-
+                elif command == 'unlock':
+                    unlock()
+                    s.wfile.write("Done")
                 else:
                     s.wfile.write("Command not found.")
                     return
@@ -110,6 +112,10 @@ def turn_left_forever():
 def turn_right_forever():
     print 'Turning right'
     robo.turn_right_forever()
+
+def unlock():
+    print 'Unlocking...'
+    robo.unlock()
 
 def music():
     if not self.player.playing_song:
