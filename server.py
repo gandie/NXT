@@ -5,6 +5,7 @@ import time
 import BaseHTTPServer
 import json
 import cgi
+import thread
 
 from robo import ScoutRobo
 from lib.nxt_player import Nxt_Player

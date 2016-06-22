@@ -11,12 +11,14 @@ import threading
 import time
 
 import random
-
 import sys
 
+# joystick support
 import pygame
 
 from lib.nxt_player import Nxt_Player
+from lib.nxt_pad import PadController
+from lib.nxt_autopilot import AutoPilot
 
 class ScoutRobo(object):
 
@@ -25,245 +27,172 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, bluetooth_only = True):
+    def __init__(self, **kwargs):
 
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
         '''
 
-        # find brick
-        if bluetooth_only:
+        # get config from keyword-arguments, default-value after comma
+        self.bluetooth_only = kwargs.get('bluetooth_only', True)
+        self.cannon = kwargs.get('cannon', False)
+        self.pad_mode = kwargs.get('pad', False)
+        self.autopilot_mode = kwargs.get('autopilot', False)
+
+        # find brick using locator-method
+        if self.bluetooth_only:
             find_brick_method = nxt.locator.Method(usb = False, bluetooth = True)
         else:
             find_brick_method = nxt.locator.Method()
 
+        # magic method-call to find robo
         self.brick = nxt.locator.find_one_brick(method = find_brick_method)
 
-        # initialize motors
-        self.motor_left = Motor(self.brick, PORT_A)
-        self.motor_right = Motor(self.brick, PORT_B)
-        self.motors = [self.motor_left, self.motor_right]
-        ##self.cannon = Motor(self.brick, PORT_C)
+        # initialize basic functions
+        self.init_motors()
+        self.init_sensors()
 
-        # initialize sensors
-        #self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_3)
-        self.sensor_touch_left = Touch(self.brick, PORT_2)
-        self.sensor_touch_right = Touch(self.brick, PORT_1)
-        #self.sensor_light_color = Light(self.brick, PORT_4)
-
-        # initialize music
-        #self.player = Nxt_Player(self.brick)
-
-        # initialize some vars used for auto-pilot
+        # initialize some useful vars
         self.touch_right = False
         self.touch_left = False
-        self.transitions = []
-        self.running = False
-        self.curr_time = time.time()
 
-        # limits used by check_transitions
-        self.transition_count = 3
-        self.transition_time = 10
-
+        # locked is udes to stop robo from moving when it has collided
+        # getting orders from http-server
         self.locked = False
+
+        # player for beeps and stuff
+        self.player = Nxt_Player(self.brick)
+
+        # start pad-mode if configured
+        if self.pad_mode:
+            self.pad_controller = PadController(self)
+            return # do not run other modes afterwards!
+
+        # start autopilot-mode if configured
+        if self.autopilot_mode:
+            self.autopilot = AutoPilot(self)
+            return
+
+    def init_motors(self):
+        '''
+        find and initialize motors from ports of brick
+        '''
+        self.motor_left = Motor(self.brick, PORT_A)
+        self.motor_right = Motor(self.brick, PORT_B)
+
+        # put main motors into list for driving
+        self.motors = [self.motor_left, self.motor_right]
+
+        # cannon is not in use for normal setup right now
+        if self.cannon:
+            # crashes if no motor is connected to port_c!
+            self.cannon_motor = Motor(self.brick, PORT_C)
+
+    def init_sensors(self):
+        '''
+        find and initialize sensors from ports of brick
+        '''
+        self.sensor_ultrasonic = Ultrasonic(self.brick, PORT_4)
+        self.sensor_touch_left = Touch(self.brick, PORT_2)
+        self.sensor_touch_right = Touch(self.brick, PORT_1)
+        self.sensor_light_color = Color20(self.brick, PORT_3)
 
     def test(self):
         '''
         use this to test new functions n' shit
         '''
         print 'testing...'
-        self.player.play_song()
+        while True:
+            try:
+                val = self.sensor_light_color.get_sample()
+                print val
+            except KeyboardInterrupt:
+                break
 
-    def run_gamepad(self):
+    def get_telemetry(self):
         '''
-        run robot in gamepad-mode. controll robot using generic x-box gamepad
-        if u wanna use another gamepad, buttons and axes have to be reconfigured
-        depending on your device
-        '''
-
-        # ask pygame for joystick-stuff
-        pygame.init()
-        pygame.joystick.init()
-
-        done = False
-
-        # main-loop to acquire joystick-events and react to them 
-        while not done:
-
-            # get pygame-events first
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    done = True
-                if event.type == pygame.JOYBUTTONDOWN:
-                    print 'buttton pressed'
-                if event.type == pygame.JOYBUTTONUP:
-                    print 'buttton released'
-
-
-            pad_count = pygame.joystick.get_count()
-
-            if pad_count != 1:
-                # maybe later do something more polite here...
-                print 'more than one gamepad found...'
-                print 'dunno whata do, closing....'
-                return
-
-            pad_index = pad_count - 1 # this will be 0...always...
-
-            # initialize pad
-            pad = pygame.joystick.Joystick(pad_index)
-            pad.init()
-
-            # main buttons
-            button_a = pad.get_button(0)
-            button_b = pad.get_button(1)
-            button_x = pad.get_button(2)
-            button_y = pad.get_button(3)
-
-            # check buttons
-            if button_a:
-                if not self.player.playing_song:
-                    thread.start_new_thread(self.player.play_song,())
-            if button_b:
-                self.fire_cannon()
-            if button_x:
-                if not self.running:
-                    self.running = True
-                    thread.start_new_thread(self.run,())
-            if button_y:
-                if self.running:
-                    self.running = False
-
-            # initialize axes for movement
-            front = pad.get_axis(4)
-            turn = pad.get_axis(3)
-            turn = round(turn, 2) # no need to be exact here...
-            front = round(front, 2)
-            
-            # check if movement has to be performed
-            if not self.running:
-                if front < -0.1:
-                    robo.go_pad(power = -65 + 62 * front)
-                if front > 0.1:
-                    robo.go_pad(power = 65 + 62 * front)
-                if turn < -0.2:
-                    robo.turn_pad(power = -65 + 62 * turn)
-                if turn > 0.2:
-                    robo.turn_pad(power = 65 + 62 * turn)
-
-                # stop robot if nothing is found
-                if abs(front) < 0.1:
-                    self.stop()
-                    continue
-                if abs(turn) < 0.1:
-                    self.stop()
-                    continue
-
-
-    def run(self, init_state = 'normal'):
-        '''
-        auto-pilot mode, driving arround, scouting area
-        TODO: implement navigation-voodoo
-        '''
-        self.state = init_state
-
-        # main loop
-        while self.running:
-
-            # get sensor data
-            self.touch_left = self.sensor_touch_left.get_sample()
-            self.touch_right = self.sensor_touch_right.get_sample()
-            self.distance = self.sensor_ultrasonic.get_sample()
-
-            self.curr_time = time.time()
-            self.check_transitions()
-
-            # check if imperial march has to be played ;-)
-            if not self.player.playing_song:
-                number = random.randint(0, 400)
-                if number == 88:
-                    thread.start_new_thread(self.player.play_song,())
-
-            # basic FSM from here...
-            if self.state == 'normal':
-                self.go_forward_forever()
-                
-                if self.touch_left:
-                    self.state = 'touch_left'
-                if self.touch_right:
-                    self.state = 'touch_right'
-                if self.distance < 8:
-                    self.state = 'front'
-
-            elif self.state == 'front':
-                self.stop()
-                self.transitions.append(('front', time.time()))
-                self.go_backward(ftime = 1.5)
-                # turn randomly if front sensor was triggered
-                if random.randint(0, 1):
-                    self.turn_right(ftime = 0.4)
-                else:
-                    self.turn_left(ftime = 0.4)
-                self.state = 'normal'
-                
-            elif self.state == 'touch_left':
-                self.stop()
-                self.transitions.append(('touch_left', time.time()))
-                self.go_backward(ftime = 1)
-                self.turn_right(ftime = 0.4)
-                self.state = 'normal'
-
-            elif self.state == 'touch_right':
-                self.stop()
-                self.transitions.append(('touch_right', time.time()))
-                self.go_backward(ftime = 1)
-                self.turn_left(ftime = 0.4)
-                self.state = 'normal'
-
-        self.stop()
-
-
-    def check_transitions(self):
-
-        counter = 0
-
-        '''
-        # do not flush transitions, rather keep them for evaluation
-
-        # check if latest transition if older than 10 seconds
-        if self.transitions:
-            last_trans = self.transitions[-1]
-            diff = self.curr_time - last_trans[1] 
-            if diff > self.transition_time:
-                # flush transitions if last one is older
-                self.transitions = []
-                return
+        method to acquire sensor data, called e.g. by external modules
         '''
 
-        # count transitions in last 10 seconds
-        for trans in self.transitions:
-            trans_time = trans[1]
-            diff = self.curr_time - trans_time
-            if diff < self.transition_time:
-                counter += 1
+        telemetry = {
+            'touch_left' : self.sensor_touch_left.get_sample(),
+            'touch_right' : self.sensor_touch_right.get_sample(),
+            'distance' : self.sensor_ultrasonic.get_sample(),
+            'color' : self.sensor_light_color.get_sample()
+        }
 
-        # lots of transitions found, cry for help...
-        if counter > self.transition_count:
-            print 'CRYING FOR HELP NOW!!!'
-            self.transitions = []
-            self.running = False
+        return telemetry
+
+    def check_color(self):
+        '''
+        check if underground has whie color (= 6)
+        '''
+
+        val = self.sensor_light_color.get_sample()
+        if val == 5:
+            return True
+        else:
+            return False
 
     def check_collision(self):
+        '''
+        check touch and ultrasonic sensors to detect collisions
+        '''
         self.touch_left = self.sensor_touch_left.get_sample()
         self.touch_right = self.sensor_touch_right.get_sample()
 
         if self.touch_left or self.touch_right:
             return True
+
+        # also check ultrasonic here, its useful if robo drives straight
+        # forward towards a wall, so touch sensors cant detect collision
+        self.distance = self.sensor_ultrasonic.get_sample()
+        if self.distance < 6:
+            return True
         
         return False
 
+    def timed_checks(self, ftime):
+        '''
+        timed collision and color checks done while robo is moving
+        '''
+
+        # count times color sensor detects goal color
+        color_times = 0
+
+        # color sensor can be a little fuzzy, so one detection does not
+        # neccessarily mean "goal reached"
+        color_times_limit = 3
+
+        # TODO: reset counter after certain amount of time!
+
+        start = time.time()
+        while True:
+            now = time.time()
+            if (now - start) > ftime:
+                break
+            if self.check_collision():
+                self.stop()
+                if not self.player.playing_song:
+                    self.player.play_song('fail')
+                self.locked = True
+                break
+            if self.check_color():
+                color_times += 1
+                if color_times > color_times_limit:
+                    self.stop()
+                    if not self.player.playing_song:
+                        self.player.play_song('success')
+                    self.locked = True
+                    break
+
+        return
+
     def unlock(self):
+        '''
+        robo is locked when it collides. unlock is called by nxt-control app
+        '''
         self.locked = False
 
     def go_forward_forever(self, power = 80):
@@ -278,32 +207,13 @@ class ScoutRobo(object):
         for motor in self.motors:
             motor.idle()
 
-    def go_pad(self, power=80):
-        for motor in self.motors:
-            motor.run(-power)
-
-    def turn_pad(self, power=80):
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(power)
-            elif motor == self.motor_right:
-                motor.run(-power)
-
     def go_forward(self, power=80, ftime=1):
         if self.locked:
             return
         for motor in self.motors:
             motor.run(power)
 
-        start = time.time()
-        while True:
-            now = time.time()
-            if (now - start) > ftime:
-                break
-            if self.check_collision():
-                self.stop()
-                self.locked = True
-                return
+        self.timed_checks(ftime)
 
         for motor in self.motors:
             motor.idle()
@@ -314,15 +224,7 @@ class ScoutRobo(object):
         for motor in self.motors:
             motor.run(-power)
 
-        start = time.time()
-        while True:
-            now = time.time()
-            if (now - start) > ftime:
-                break
-            if self.check_collision():
-                self.stop()
-                self.locked = True
-                return
+        self.timed_checks(ftime)
 
         for motor in self.motors:
             motor.idle()
@@ -335,26 +237,11 @@ class ScoutRobo(object):
                 motor.run(-power)
             elif motor == self.motor_right:
                 motor.run(power)
-        #time.sleep(ftime)
-        start = time.time()
-        while True:
-            now = time.time()
-            if (now - start) > ftime:
-                break
-            if self.check_collision():
-                self.stop()
-                self.locked = True
-                return
+
+        self.timed_checks(ftime)
 
         for motor in self.motors:
             motor.idle()
-
-    def turn_left_forever(self, power=80):
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(-power)
-            elif motor == self.motor_right:
-                motor.run(power)
 
     def turn_right(self, power=80, ftime=1):
         if self.locked:
@@ -364,16 +251,8 @@ class ScoutRobo(object):
                 motor.run(power)
             elif motor == self.motor_right:
                 motor.run(-power)
-        #time.sleep(ftime)
-        start = time.time()
-        while True:
-            now = time.time()
-            if (now - start) > ftime:
-                break
-            if self.check_collision():
-                self.stop()
-                self.locked = True
-                return
+
+        self.timed_checks(ftime)
 
         for motor in self.motors:
             motor.idle()
@@ -385,9 +264,16 @@ class ScoutRobo(object):
             elif motor == self.motor_right:
                 motor.run(-power)
 
+    def turn_left_forever(self, power=80):
+        for motor in self.motors:
+            if motor == self.motor_left:
+                motor.run(-power)
+            elif motor == self.motor_right:
+                motor.run(power)
+
     def fire_cannon(self, balls=1):
-        self.cannon.turn(127,360*balls)
-        self.cannon.idle() # changed this to idle to make cannon movable
+        self.cannon_motor.turn(127,360*balls)
+        self.cannon_motor.idle()
 
 if __name__ == '__main__':
     robo = ScoutRobo()

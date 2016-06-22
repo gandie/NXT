@@ -62,6 +62,38 @@ class Nxt_Player(object):
         'GIS3' : 3322
     }
 
+    songs['success'] = {
+        'title' : 'Success',
+        'tacts' : [
+            {
+                'number' : 1,
+                'notes' : [
+                    ('C1', 1),
+                    ('C1', 1),
+                    ('C1', 1),
+                    ('E1', 2),
+                    ('C1', 1),
+                    ('E1', 3)
+                ]
+            }
+        ]
+    }
+
+    songs['fail'] = {
+        'title' : 'Fail',
+        'tacts' : [
+            {
+                'number' : 1,
+                'notes' : [
+                    ('E0', 1),
+                    ('E0', 1),
+                    ('E0', 1),
+                    ('C0', 3)
+                ]
+            }
+        ]
+    }
+
 
     songs['march'] = {
         'title' : "Imperial March",
