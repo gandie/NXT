@@ -116,7 +116,12 @@ def turn_right_forever():
 
 def unlock():
     print 'Unlocking...'
-    robo.unlock()
+    if robo.locked:
+        print 'unlocking...'
+        robo.unlock()
+    else:
+        robo.locked = True
+        print 'locking...'
 
 def music():
     if not self.player.playing_song:

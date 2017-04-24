@@ -126,7 +126,7 @@ class ScoutRobo(object):
 
     def check_color(self):
         '''
-        check if underground has whie color (= 6)
+        check if underground has white color (= 6)
         '''
 
         val = self.sensor_light_color.get_sample()
@@ -276,7 +276,7 @@ class ScoutRobo(object):
         self.cannon_motor.idle()
 
 if __name__ == '__main__':
-    robo = ScoutRobo()
+    robo = ScoutRobo(pad = True)
     #robo.test()
     if len(sys.argv) > 1:
         mode = sys.argv[1]
@@ -294,7 +294,7 @@ if __name__ == '__main__':
         robo.test()
     elif mode == 'pad':
         try:
-            robo.run_gamepad()
+            robo.pad_controller.run_gamepad()
         except Exception as e:
             print e
             print 'pad-mode died...'
