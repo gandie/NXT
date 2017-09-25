@@ -13,6 +13,7 @@ from lib.nxt_player import Nxt_Player
 HOST_NAME = ''
 PORT_NUMBER = 14242
 
+
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_HEAD(s):

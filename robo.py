@@ -57,7 +57,7 @@ class ScoutRobo(object):
         self.touch_right = False
         self.touch_left = False
 
-        # locked is udes to stop robo from moving when it has collided
+        # locked is used to stop robo from moving when it has collided
         # getting orders from http-server
         self.locked = False
 
@@ -150,7 +150,7 @@ class ScoutRobo(object):
         self.distance = self.sensor_ultrasonic.get_sample()
         if self.distance < 6:
             return True
-        
+
         return False
 
     def timed_checks(self, ftime):
@@ -176,7 +176,7 @@ class ScoutRobo(object):
                 self.stop()
                 if not self.player.playing_song:
                     self.player.play_song('fail')
-                self.locked = True
+                # self.locked = True
                 break
             if self.check_color():
                 color_times += 1
@@ -184,7 +184,7 @@ class ScoutRobo(object):
                     self.stop()
                     if not self.player.playing_song:
                         self.player.play_song('success')
-                    self.locked = True
+                    # self.locked = True
                     break
 
         return
