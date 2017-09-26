@@ -277,7 +277,8 @@ class ScoutRobo(object):
         self.cannon_motor.idle()
 
 if __name__ == '__main__':
-    robo = ScoutRobo(pad = True)
+    # Change baddr and pin for your robot
+    robo = ScoutRobo(baddr="00:16:53:0D:14:AE", pin="1234", pad=True)
     #robo.test()
     if len(sys.argv) > 1:
         mode = sys.argv[1]
