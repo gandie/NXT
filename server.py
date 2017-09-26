@@ -10,7 +10,7 @@ import thread
 from robo import ScoutRobo
 from lib.nxt_player import Nxt_Player
 
-HOST_NAME = ''
+HOST_NAME = '127.0.0.1'
 PORT_NUMBER = 14242
 
 
@@ -21,7 +21,11 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         s.send_header("Content-type", "text/html")
         s.end_headers()
     def do_GET(s):
-        """Respond to a GET request."""
+        """
+        Respond to a GET request.
+
+        Example url: 'http://127.0.0.1:14242/nxt?command=go_forward&ftime=2'
+        """
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
@@ -37,6 +41,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if 'nxt' in rpath:
             if 'command' in args.keys():
                 command = args['command'][0]
+                ftime = 1
                 if 'ftime' in args.keys():
                     ftime = float(args['ftime'][0])
                 if (command == 'go_forward'):
@@ -135,7 +140,8 @@ def music():
 if __name__ == '__main__':
     server_class = BaseHTTPServer.HTTPServer
     httpd = server_class((HOST_NAME, PORT_NUMBER), MyHandler)
-    robo = ScoutRobo(bluetooth_only = True)
+    # Change baddr and pin for your robot
+    robo = ScoutRobo(baddr="00:16:53:0D:14:AE", pin="1234")
     try:
         print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
         httpd.serve_forever()

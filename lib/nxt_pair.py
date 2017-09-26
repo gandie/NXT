@@ -16,9 +16,9 @@ class Pair():
 		'''
 		Removes the paired device and exits bluetoothctl
 		'''
-
 		self.proc.sendline("remove " + self._baddr)
 		self.proc.sendline("exit")
+		print("Paired nxt removed")
 
 	def pair_device(self):
 		'''
