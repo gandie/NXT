@@ -5,6 +5,7 @@ import nxt.locator
 import thread
 from nxt.motor import *
 from nxt.sensor import *
+from nxt.bluesock import BlueSock
 
 import thread
 import threading
@@ -19,6 +20,7 @@ import pygame
 from lib.nxt_player import Nxt_Player
 from lib.nxt_pad import PadController
 from lib.nxt_autopilot import AutoPilot
+from lib.nxt_pair import Pair
 
 class ScoutRobo(object):
 
@@ -27,27 +29,26 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, **kwargs):
+    def __init__(self, baddr, pin, **kwargs):
 
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
+
+		:param baddr: The bluetooth mac address
+		:param pin: The pin to ensure the connection
         '''
 
         # get config from keyword-arguments, default-value after comma
-        self.bluetooth_only = kwargs.get('bluetooth_only', True)
         self.cannon = kwargs.get('cannon', False)
         self.pad_mode = kwargs.get('pad', False)
         self.autopilot_mode = kwargs.get('autopilot', False)
 
-        # find brick using locator-method
-        if self.bluetooth_only:
-            find_brick_method = nxt.locator.Method(usb = False, bluetooth = True)
-        else:
-            find_brick_method = nxt.locator.Method()
+        # Pair with nxt via bluetooth
+        self.stable_connection = Pair(baddr, pin)
 
-        # magic method-call to find robo
-        self.brick = nxt.locator.find_one_brick(method = find_brick_method)
+        # Connect to nxt via bluetooth
+        self.brick = BlueSock(baddr).connect()
 
         # initialize basic functions
         self.init_motors()
