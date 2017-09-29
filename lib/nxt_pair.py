@@ -1,76 +1,77 @@
 import pexpect
 
-class Pair():
-	def __init__(self, baddr, pin):
-		'''
-		Pair your device via bluetooth
 
-		:param baddr: The bluetooth mac address
-		:param pin: The pin to ensure the connection
-		'''
+class Pair(object):
+    def __init__(self, baddr, pin):
+        '''
+        Pair your device via bluetooth
 
-		self._baddr = baddr
-		self._pin = pin
+        :param baddr: The bluetooth mac address
+        :param pin: The pin to ensure the connection
+        '''
 
-		self.pair_device()
+        self._baddr = baddr
+        self._pin = pin
 
-	def __del__(self):
-		'''
-		Removes the paired device and disables the scan if needed.
-		Exits bluetoothctl
-		'''
-		self.clear_bluetooth()
-		self.proc.sendline("exit")
-		print("Paired nxt removed")
+        self.pair_device()
 
-	def clear_bluetooth(self):
-		'''
-		Just removes the devise and stops the scanning, even if it's not needed. It won't hurt :)
-		'''
-		self.proc.sendline("remove " + self._baddr)
-		self.proc.sendline("scan off")
+    def __del__(self):
+        '''
+        Removes the paired device and disables the scan if needed.
+        Exits bluetoothctl
+        '''
+        self.clear_bluetooth()
+        self.proc.sendline("exit")
+        print("Paired nxt removed")
 
-	def pair_device(self):
-		'''
-		Pairs the device
-		'''
-		# TODO: Add a non hardcoded solution (This solution may not work with non english systems)
+    def clear_bluetooth(self):
+        '''
+        Just removes the devise and stops the scanning, even if it's not needed. It won't hurt :)
+        '''
+        self.proc.sendline("remove " + self._baddr)
+        self.proc.sendline("scan off")
 
-		print("Pairing with " + self._baddr + "...")
-		self.proc = pexpect.spawn('bluetoothctl')
+    def pair_device(self):
+        '''
+        Pairs the device
+        '''
+        # TODO: Add a non hardcoded solution (This solution may not work with non english systems)
 
-		# Init fixes to make 100% sure that nothing will stop us!! (only works if agent is on)
-		self.clear_bluetooth()
+        print("Pairing with " + self._baddr + "...")
+        self.proc = pexpect.spawn('bluetoothctl')
 
-		self.proc.sendline("agent on")
-		self.proc.expect("Agent registered")
-		print(self.proc.after.decode())
+        # Init fixes to make 100% sure that nothing will stop us!! (only works if agent is on)
+        self.clear_bluetooth()
 
-		self.proc.sendline("scan on")
-		self.proc.expect("Discovery started")
-		print(self.proc.after.decode())
+        self.proc.sendline("agent on")
+        self.proc.expect("Agent registered")
+        print(self.proc.after.decode())
 
-		print("Pairing...")
-		print("Watch the screen of your robot!")
+        self.proc.sendline("scan on")
+        self.proc.expect("Discovery started")
+        print(self.proc.after.decode())
 
-		# Tries to pairs with bluetooth mac address.
-		# If the string "Enter PIN Code" was recognized, break the pairing loop
-		for i in range(0, 10):
-			try:
-				self.proc.sendline("pair " + self._baddr)
-				self.proc.expect("Enter PIN code", timeout=2)
-				break
-			except:
-				pass
-		else:
-			raise Exception("Couldn't connect to blutooth device, a second try will mostly fix it!")
+        print("Pairing...")
+        print("Watch the screen of your robot!")
 
-		self.proc.sendline(self._pin)
-		self.proc.expect("Pairing successful")
-		print(self.proc.after.decode())
+        # Tries to pairs with bluetooth mac address.
+        # If the string "Enter PIN Code" was recognized, break the pairing loop
+        for _ in xrange(0, 10):
+            try:
+                self.proc.sendline("pair " + self._baddr)
+                self.proc.expect("Enter PIN code", timeout=2)
+                break
+            except:
+                pass
+        else:
+            raise Exception("Couldn't connect to blutooth device, a second try will mostly fix it!")
 
-		self.proc.sendline("scan off")
-		self.proc.expect("Discovery stopped")
-		print(self.proc.after.decode())
+        self.proc.sendline(self._pin)
+        self.proc.expect("Pairing successful")
+        print(self.proc.after.decode())
 
-		print("Your device is now paired!")
+        self.proc.sendline("scan off")
+        self.proc.expect("Discovery stopped")
+        print(self.proc.after.decode())
+
+        print("Your device is now paired!")

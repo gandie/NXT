@@ -3,6 +3,7 @@
 
 import time
 
+
 class AutoPilot(object):
     '''
     simple autopilot module for scoutrobo to drive arround autonomously
@@ -18,7 +19,7 @@ class AutoPilot(object):
         self.transition_count = 3
         self.transition_time = 10
 
-    def run(self, init_state = 'normal'):
+    def run(self, init_state='normal'):
         '''
         auto-pilot mode, driving arround, scouting area
         TODO: implement navigation-voodoo
@@ -45,7 +46,7 @@ class AutoPilot(object):
                 self.robo.go_forward_forever()
 
                 if self.distance < 8:
-                    self.state = 'front'                
+                    self.state = 'front'
                 if self.touch_left:
                     self.state = 'touch_left'
                 if self.touch_right:
@@ -54,30 +55,29 @@ class AutoPilot(object):
             elif self.state == 'front':
                 self.robo.stop()
                 self.transitions.append(('front', time.time()))
-                self.robo.go_backward(ftime = 1.5)
+                self.robo.go_backward(ftime=1.5)
                 # turn randomly if front sensor was triggered
                 if random.randint(0, 1):
-                    self.turn_right(ftime = 0.4)
+                    self.turn_right(ftime=0.4)
                 else:
-                    self.turn_left(ftime = 0.4)
+                    self.turn_left(ftime=0.4)
                 self.state = 'normal'
-                
+
             elif self.state == 'touch_left':
                 self.stop()
                 self.transitions.append(('touch_left', time.time()))
-                self.go_backward(ftime = 1)
-                self.turn_right(ftime = 0.4)
+                self.go_backward(ftime=1)
+                self.turn_right(ftime=0.4)
                 self.state = 'normal'
 
             elif self.state == 'touch_right':
                 self.stop()
                 self.transitions.append(('touch_right', time.time()))
-                self.go_backward(ftime = 1)
-                self.turn_left(ftime = 0.4)
+                self.go_backward(ftime=1)
+                self.turn_left(ftime=0.4)
                 self.state = 'normal'
 
         self.stop()
-
 
     def check_transitions(self):
         '''

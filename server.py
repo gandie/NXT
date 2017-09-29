@@ -23,6 +23,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
+
     def do_GET(self):
         """
         Respond to a GET request.
@@ -37,16 +38,16 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         idx = self.path.find('?')
         if idx >= 0:
             self.rpath = self.path[:idx]
-            self.args = cgi.parse_qs(self.path[idx+1:])
+            self.args = cgi.parse_qs(self.path[idx + 1:])
         else:
             self.rpath = self.path
 
         try:
             self.execute_command()
-        except: # Doesn't matter what happens, if the server is broke just shut it down
+        except:  # Doesn't matter what happens, if the server is broke just shut it down
             print("Error while executing command")
-            self.server._BaseServer__shutdown_request = True  # Shutdowns the server without waiting (without deadlock)
-
+            # Shutdowns the server without waiting (without deadlock)
+            self.server._BaseServer__shutdown_request = True
 
     def execute_command(self):
         if 'nxt' in self.rpath:
@@ -57,7 +58,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     ftime = float(self.args['ftime'][0])
                 # Use example: command=get_samples:json or command=get_samples:html or just command=get_samples
                 if "get_samples" in command:
-                    #keep_alive() # Because this if branch is ALWAYS called when we are in the web interface
+                    # keep_alive() # Because this if branch is ALWAYS called when we are in the web interface
                     if "json" in command:
                         samples = get_samples(json=True)
                     elif "html" in command:
@@ -126,44 +127,55 @@ def get_samples(**kwargs):
 
     return joiner.join(sensor + ": " + str(sample) for sensor, sample in robo.get_telemetry().items())
 
+
 def keep_alive():
     robo.keep_alive()
 
+
 def go_forward(ftime):
     print("Go forward..")
-    robo.go_forward(ftime = ftime)
+    robo.go_forward(ftime=ftime)
+
 
 def go_backward(ftime):
     print("Go back..")
-    robo.go_backward(ftime = ftime)
+    robo.go_backward(ftime=ftime)
+
 
 def turn_left(ftime):
     print("Turn right..")
-    robo.turn_left(ftime = ftime)
+    robo.turn_left(ftime=ftime)
+
 
 def turn_right(ftime):
     print("Turn left..")
-    robo.turn_right(ftime = ftime)
+    robo.turn_right(ftime=ftime)
+
 
 def stop():
     print("Stopping...")
     robo.stop()
 
+
 def go_forward_forever():
     print 'Going forward...'
     robo.go_forward_forever()
+
 
 def go_backward_forever():
     print 'Going forward...'
     robo.go_backward_forever()
 
+
 def turn_left_forever():
     print 'Turning right'
     robo.turn_left_forever()
 
+
 def turn_right_forever():
     print 'Turning right'
     robo.turn_right_forever()
+
 
 def unlock():
     print 'Unlocking...'
@@ -174,11 +186,12 @@ def unlock():
         robo.locked = True
         print 'locking...'
 
+
 def music():
     if not self.player.playing_song:
         number = random.randint(0, 400)
         if number == 88:
-            thread.start_new_thread(self.player.play_song,())
+            thread.start_new_thread(self.player.play_song, ())
 
 
 # Startpunkt
@@ -196,4 +209,3 @@ if __name__ == '__main__':
     print("Server shuts down...")
     httpd.server_close()
     print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
-

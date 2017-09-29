@@ -11,63 +11,63 @@ class Nxt_Player(object):
     songs = {}
 
     # playable notes
-    freqs = {            
-        'A0' : 220,
-        'B0' : 233,
-        'H0' : 247,
-        'C0' : 262,
-        'CIS0' : 277,
-        'D0' : 294,
-        'DIS0' : 311,
-        'E0' : 330,
-        'F0' : 349,
-        'FIS0' : 370,
-        'G0' : 392,
-        'GIS0' : 415,
-        'A1' : 440,
-        'B1' : 466,
-        'H1' : 494,
-        'C1' : 523,
-        'CIS1' : 554,
-        'D1' : 587,
-        'DIS1' : 622,
-        'E1' : 659,
-        'F1' : 698,
-        'FIS1' : 740,
-        'G1' : 784,
-        'GIS1' : 831,
-        'A2' : 880,
-        'B2' : 932,
-        'H2' : 988,
-        'C2' : 1047,
-        'CIS2' : 1109,
-        'D2' : 1175,
-        'DIS2' : 1245,
-        'E2' : 1319,
-        'F2' : 1397,
-        'FIS2' : 1480,
-        'G2' : 1568,
-        'GIS2' : 1661,
-        'A3' : 1760,
-        'B3' : 1865,
-        'H3' : 1976,
-        'C3' : 2093,
-        'CIS3' : 2217,
-        'D3' : 2349,
-        'DIS3' : 2489,
-        'E3' : 2637,
-        'F3' : 2794,
-        'FIS3' : 2960,
-        'G3' : 3136,
-        'GIS3' : 3322
+    freqs = {
+        'A0': 220,
+        'B0': 233,
+        'H0': 247,
+        'C0': 262,
+        'CIS0': 277,
+        'D0': 294,
+        'DIS0': 311,
+        'E0': 330,
+        'F0': 349,
+        'FIS0': 370,
+        'G0': 392,
+        'GIS0': 415,
+        'A1': 440,
+        'B1': 466,
+        'H1': 494,
+        'C1': 523,
+        'CIS1': 554,
+        'D1': 587,
+        'DIS1': 622,
+        'E1': 659,
+        'F1': 698,
+        'FIS1': 740,
+        'G1': 784,
+        'GIS1': 831,
+        'A2': 880,
+        'B2': 932,
+        'H2': 988,
+        'C2': 1047,
+        'CIS2': 1109,
+        'D2': 1175,
+        'DIS2': 1245,
+        'E2': 1319,
+        'F2': 1397,
+        'FIS2': 1480,
+        'G2': 1568,
+        'GIS2': 1661,
+        'A3': 1760,
+        'B3': 1865,
+        'H3': 1976,
+        'C3': 2093,
+        'CIS3': 2217,
+        'D3': 2349,
+        'DIS3': 2489,
+        'E3': 2637,
+        'F3': 2794,
+        'FIS3': 2960,
+        'G3': 3136,
+        'GIS3': 3322
     }
 
     songs['success'] = {
-        'title' : 'Success',
-        'tacts' : [
+        'title': 'Success',
+        'tacts': [
             {
-                'number' : 1,
-                'notes' : [
+                'number': 1,
+                'notes': [
                     ('C1', 1),
                     ('C1', 1),
                     ('C1', 1),
@@ -80,11 +80,11 @@ class Nxt_Player(object):
     }
 
     songs['fail'] = {
-        'title' : 'Fail',
-        'tacts' : [
+        'title': 'Fail',
+        'tacts': [
             {
-                'number' : 1,
-                'notes' : [
+                'number': 1,
+                'notes': [
                     ('E0', 1),
                     ('E0', 1),
                     ('E0', 1),
@@ -94,13 +94,12 @@ class Nxt_Player(object):
         ]
     }
 
-
     songs['march'] = {
-        'title' : "Imperial March",
-        'tacts' : [
+        'title': "Imperial March",
+        'tacts': [
             {
-                'number' : 1,
-                'notes' : [
+                'number': 1,
+                'notes': [
                     ('G0', 4),
                     ('G0', 4),
                     ('G0', 4),
@@ -109,8 +108,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 2,
-                'notes' : [
+                'number': 2,
+                'notes': [
                     ('G0', 4),
                     ('DIS0', 3),
                     ('B1', 1),
@@ -118,8 +117,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 3,
-                'notes' : [
+                'number': 3,
+                'notes': [
                     ('D1', 4),
                     ('D1', 4),
                     ('D1', 4),
@@ -128,8 +127,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 4,
-                'notes' : [
+                'number': 4,
+                'notes': [
                     ('FIS0', 4),
                     ('DIS0', 3),
                     ('H1', 1),
@@ -137,8 +136,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 5,
-                'notes' : [
+                'number': 5,
+                'notes': [
                     ('G1', 4),
                     ('G0', 3),
                     ('G0', 1),
@@ -148,8 +147,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 6,
-                'notes' : [
+                'number': 6,
+                'notes': [
                     ('E1', 1),
                     ('DIS1', 1),
                     ('E1', 4),
@@ -160,8 +159,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 7,
-                'notes' : [
+                'number': 7,
+                'notes': [
                     ('B1', 1),
                     ('A1', 1),
                     ('B1', 4),
@@ -172,8 +171,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 8,
-                'notes' : [
+                'number': 8,
+                'notes': [
                     ('B1', 4),
                     ('G0', 3),
                     ('B1', 1),
@@ -181,8 +180,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 9,
-                'notes' : [
+                'number': 9,
+                'notes': [
                     ('G1', 4),
                     ('G0', 3),
                     ('G0', 1),
@@ -192,8 +191,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 10,
-                'notes' : [
+                'number': 10,
+                'notes': [
                     ('E1', 1),
                     ('DIS1', 1),
                     ('E1', 4),
@@ -204,8 +203,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 11,
-                'notes' : [
+                'number': 11,
+                'notes': [
                     ('B1', 1),
                     ('A1', 1),
                     ('B1', 4),
@@ -216,8 +215,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 12,
-                'notes' : [
+                'number': 12,
+                'notes': [
                     ('G0', 4),
                     ('DIS0', 3),
                     ('B1', 1),
@@ -228,11 +227,11 @@ class Nxt_Player(object):
     }
 
     songs['schland'] = {
-        'title' : "Deutschland-Lied",
-        'tacts' : [
+        'title': "Deutschland-Lied",
+        'tacts': [
             {
-                'number' : 1,
-                'notes' : [
+                'number': 1,
+                'notes': [
                     ('F1', 6),
                     ('G1', 2),
                     ('A2', 4),
@@ -240,8 +239,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 2,
-                'notes' : [
+                'number': 2,
+                'notes': [
                     ('B2', 4),
                     ('A2', 4),
                     ('G1', 2),
@@ -250,8 +249,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 3,
-                'notes' : [
+                'number': 3,
+                'notes': [
                     ('D2', 4),
                     ('C2', 4),
                     ('B2', 4),
@@ -260,8 +259,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 4,
-                'notes' : [
+                'number': 4,
+                'notes': [
                     ('G1', 4),
                     ('A2', 2),
                     ('F1', 2),
@@ -269,8 +268,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 5,
-                'notes' : [
+                'number': 5,
+                'notes': [
                     ('F1', 6),
                     ('G1', 2),
                     ('A2', 4),
@@ -278,8 +277,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 6,
-                'notes' : [
+                'number': 6,
+                'notes': [
                     ('B2', 4),
                     ('A2', 4),
                     ('G1', 2),
@@ -288,8 +287,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 7,
-                'notes' : [
+                'number': 7,
+                'notes': [
                     ('D2', 4),
                     ('C2', 4),
                     ('B2', 4),
@@ -297,8 +296,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 8,
-                'notes' : [
+                'number': 8,
+                'notes': [
                     ('G1', 4),
                     ('A2', 2),
                     ('F1', 2),
@@ -306,8 +305,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 9,
-                'notes' : [
+                'number': 9,
+                'notes': [
                     ('G1', 4),
                     ('A2', 4),
                     ('G1', 2),
@@ -316,8 +315,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 10,
-                'notes' : [
+                'number': 10,
+                'notes': [
                     ('B2', 4),
                     ('A2', 4),
                     ('G1', 2),
@@ -327,8 +326,8 @@ class Nxt_Player(object):
             },
             # CONTINUE HERE!!
             {
-                'number' : 11,
-                'notes' : [
+                'number': 11,
+                'notes': [
                     ('B1', 1),
                     ('A1', 1),
                     ('B1', 4),
@@ -339,8 +338,8 @@ class Nxt_Player(object):
                 ]
             },
             {
-                'number' : 12,
-                'notes' : [
+                'number': 12,
+                'notes': [
                     ('G0', 4),
                     ('DIS0', 3),
                     ('B1', 1),
@@ -358,80 +357,80 @@ class Nxt_Player(object):
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['E1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 4*v)
-            
-            self.brick.play_tone_and_wait(self.freqs['D2'], 4*v)      
+
+            self.brick.play_tone_and_wait(self.freqs['D2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['G1'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 8*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['F1'], 6*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['E1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 4*v)
-            
-            self.brick.play_tone_and_wait(self.freqs['D2'], 4*v)      
+
+            self.brick.play_tone_and_wait(self.freqs['D2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['G1'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 8*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['G1'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['E1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C1'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['E1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C1'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['C2'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)      
+            self.brick.play_tone_and_wait(self.freqs['B2'], 4*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 6*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['H2'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['H2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['H2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 8*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['G2'], 6*v)
-            self.brick.play_tone_and_wait(self.freqs['E2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['E2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['E2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['D2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['D2'], 6*v)
-            self.brick.play_tone_and_wait(self.freqs['C2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['C2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['B2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['A2'], 4*v)
-            
+
             self.brick.play_tone_and_wait(self.freqs['G1'], 6*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], v)
             self.brick.play_tone_and_wait(self.freqs['B2'], v)
             self.brick.play_tone_and_wait(self.freqs['C2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['D2'], 2*v)
@@ -439,11 +438,10 @@ class Nxt_Player(object):
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
 
             self.brick.play_tone_and_wait(self.freqs['F1'], 4*v)
-            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)      
+            self.brick.play_tone_and_wait(self.freqs['A2'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['G1'], 2*v)
             self.brick.play_tone_and_wait(self.freqs['F1'], 8*v)
     '''
-
 
     def __init__(self, brick):
         self.brick = brick
@@ -451,7 +449,7 @@ class Nxt_Player(object):
         self.stopped = False
         self.curr_tact = 0
 
-    def play_song(self, song_name = 'march', v = 150, times = 1):
+    def play_song(self, song_name='march', v=150, times=1):
         song = self.songs.get(song_name)
         if not self.playing_song:
             self.playing_song = True
@@ -481,6 +479,7 @@ class Nxt_Player(object):
         else:
             print 'Error: Already playing...'
             return
+
 
 if __name__ == '__main__':
     test_player = Nxt_Player('foo')
