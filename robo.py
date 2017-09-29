@@ -99,7 +99,8 @@ class ScoutRobo(object):
 		self.sensors = {
 			"touch_left": Touch(self.brick, PORT_2),
 			"touch_right": Touch(self.brick, PORT_1),
-			"light_color": Color20(self.brick, PORT_3)
+			"light_color": Color20(self.brick, PORT_3),
+			"ultrasonic": Ultrasonic(self.brick, PORT_4)
 		}
 
 	def test(self):
@@ -114,13 +115,21 @@ class ScoutRobo(object):
 			except KeyboardInterrupt:
 				break
 
+	def keep_alive(self):
+		'''
+		Keeps robot connection alive so it won't turn off automatically after time.
+		It will come to weird errors if the robot turns off while the server is running. Only option is to terminate the process then.
+		Don't even know if this is working, just a theory
+		'''
+		self.brick.sock.send("DD!")
+
 	def get_telemetry(self):
 		'''
         method to acquire sensor data, called e.g. by external modules
         '''
 
 		# Fancy oneliner to create a new dictionary with old keys but new values
-		telemetry = {d : self.sensors[d].get_sample() for d in self.sensors}
+		telemetry = {k : v.get_sample() for k, v in self.sensors.items()}
 
 		return telemetry
 

@@ -4,21 +4,31 @@ class Pair():
 	def __init__(self, baddr, pin):
 		'''
 		Pair your device via bluetooth
+
 		:param baddr: The bluetooth mac address
 		:param pin: The pin to ensure the connection
 		'''
 
 		self._baddr = baddr
 		self._pin = pin
+
 		self.pair_device()
 
 	def __del__(self):
 		'''
-		Removes the paired device and exits bluetoothctl
+		Removes the paired device and disables the scan if needed.
+		Exits bluetoothctl
 		'''
-		self.proc.sendline("remove " + self._baddr)
+		self.clear_bluetooth()
 		self.proc.sendline("exit")
 		print("Paired nxt removed")
+
+	def clear_bluetooth(self):
+		'''
+		Just removes the devise and stops the scanning, even if it's not needed. It won't hurt :)
+		'''
+		self.proc.sendline("remove " + self._baddr)
+		self.proc.sendline("scan off")
 
 	def pair_device(self):
 		'''
@@ -28,6 +38,9 @@ class Pair():
 
 		print("Pairing with " + self._baddr + "...")
 		self.proc = pexpect.spawn('bluetoothctl')
+
+		# Init fixes to make 100% sure that nothing will stop us!! (only works if agent is on)
+		self.clear_bluetooth()
 
 		self.proc.sendline("agent on")
 		self.proc.expect("Agent registered")
@@ -50,7 +63,7 @@ class Pair():
 			except:
 				pass
 		else:
-			raise Exception("Couldn't connect to blutooth device")
+			raise Exception("Couldn't connect to blutooth device, a second try will mostly fix it!")
 
 		self.proc.sendline(self._pin)
 		self.proc.expect("Pairing successful")
