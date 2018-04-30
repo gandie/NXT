@@ -13,7 +13,7 @@ from robo import ScoutRobo
 from lib.nxt_player import Nxt_Player
 from nxt.telegram import InvalidOpcodeError
 
-HOST_NAME = '127.0.0.1'
+HOST_NAME = '0.0.0.0'
 PORT_NUMBER = 14242
 
 
