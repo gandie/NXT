@@ -21,11 +21,13 @@ while True:
         else:
             received.append(data)
     dataset = ''.join(received)
+    print('received')
     # print(dataset)
     try:
         image = pygame.image.fromstring(dataset, (640, 480), "RGB")
         pygame.image.save(image, "test.jpg")
         print('success!')
     except:
+        print('failed')
         pass
-    # time.sleep(1)
+    time.sleep(1)
