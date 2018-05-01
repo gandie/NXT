@@ -20,6 +20,7 @@ class NxtServer(object):
         print('Starting main loop')
         while True:
             data, addr = self.sock.recvfrom(1024)  # buffer size is 1024 bytes
+            print('received')
             try:
                 data_json = json.loads(data)
                 forward = data_json['forward']
