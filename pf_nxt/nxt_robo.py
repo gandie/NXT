@@ -19,16 +19,13 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, baddr, pin, cannon=False):
+    def __init__(self, baddr, pin):
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
         :param baddr: The bluetooth mac address
         :param pin: The pin to ensure the connection
         '''
-
-        # get config from keyword-arguments, default-value after comma
-        self.cannon = cannon
 
         # Pair with nxt via bluetooth
         self.stable_connection = Pair(baddr, pin)
@@ -51,9 +48,11 @@ class ScoutRobo(object):
         # player for beeps and stuff
         self.player = Nxt_Player(self.brick)
 
-        # Initialize pad and autopilto modules
+        # Initialize pad and autopilot modules
         self.pad_controller = PadController(self)
         self.autopilot = AutoPilot(self)
+
+        self.calibrate()
 
     def init_motors(self):
         '''
@@ -67,18 +66,48 @@ class ScoutRobo(object):
 
         self.steering_motor = Motor(self.brick, PORT_C)
         self.steering_motor.brake()
-        '''
-        self.motor_left = Motor(self.brick, PORT_A)
-        self.motor_right = Motor(self.brick, PORT_B)
 
-        # put main motors into list for driving
-        self.motors = [self.motor_left, self.motor_right]
-
-        # cannon is not in use for normal setup right now
-        if self.cannon:
-            # crashes if no motor is connected to port_c!
-            self.cannon_motor = Motor(self.brick, PORT_C)
+    def calibrate(self):
         '''
+        turn steering motor to extreme positions and calculate middle position
+        from both end positions
+        '''
+        print('calibrating...')
+        direction = 1
+        self.steering_motor.run(power=direction * 60)
+        time.sleep(10)
+        self.steering_motor.brake()
+        tacho = self.steering_motor.get_tacho()
+        tacho_one = tacho.tacho_count
+        self.max_left = tacho_one
+        print('left max', tacho_one)
+        direction = -1
+        self.steering_motor.run(power=direction * 60)
+        time.sleep(10)
+        self.steering_motor.brake()
+        tacho = self.steering_motor.get_tacho()
+        tacho_two = tacho.tacho_count
+        self.max_right = tacho_two
+        print('max right', tacho_two)
+        interval = tacho_one - tacho_two
+        self.steering_interval = interval / 2
+        # middle = interval / 2
+        self.tacho_middle = tacho_two + self.steering_interval
+        for i in range(5):
+            tacho = self.steering_motor.get_tacho()
+            tacho_cur = tacho.tacho_count
+            tacho_diff = self.tacho_middle - tacho_cur
+            if tacho_diff > 0:
+                self.steering_motor.turn(power=50, tacho_units=tacho_diff)
+                time.sleep(1)
+            elif tacho_diff < 0:
+                self.steering_motor.turn(power=-50, tacho_units=-tacho_diff)
+                time.sleep(1)
+
+        tacho = self.steering_motor.get_tacho()
+        tacho_middle_now = tacho.tacho_count
+        self.steering_motor.idle()
+        print('calibration done', tacho_one, tacho_two, self.tacho_middle, tacho_middle_now)
 
     def init_sensors(self):
         '''
@@ -106,6 +135,64 @@ class ScoutRobo(object):
                 print('Are you sure its plugged in?')  # Have u tried turning it off and on again?
                 continue
             self.sensors[sensor_name] = sensor_instance
+
+    def move(self, forward, turn):
+        '''
+        move robot based on forward and turn values which should be between -1
+        and 1
+        '''
+
+        # do not react to forward/turn values smaller than...
+        STEERING_MARGIN = 0.1
+        # fraction of steering interval used, 1 means full (not recommended!)
+        STEERING_DAMPENING = 0.5
+        # power used on steering motor, between ~60 and 127
+        STEERING_POWER = 90
+
+        # check if forward/backward has to be performed
+        # 60 is minimum power and maximum is 127
+        if forward < -STEERING_MARGIN:
+            self.go_forward(power=(-60 + 67 * forward))
+        if forward > STEERING_MARGIN:
+            self.go_forward(power=(60 + 67 * forward))
+
+        tacho = self.steering_motor.get_tacho()
+        tacho_cur = tacho.tacho_count
+
+        # stop robot if nothing is found
+        if abs(forward) < STEERING_MARGIN:
+            self.stop()
+        if abs(turn) < STEERING_MARGIN:
+            # go to middle position
+            tacho_diff = self.tacho_middle - tacho_cur
+            if tacho_diff > 0:
+                self.steering_motor.turn(
+                    power=STEERING_POWER,
+                    tacho_units=tacho_diff
+                )
+            elif tacho_diff < 0:
+                self.steering_motor.turn(
+                    power=-STEERING_POWER,
+                    tacho_units=-tacho_diff
+                )
+        else:  # ...or perform steering by
+            # calculating difference to middle position based on turn value
+            # avoid oversteering, only use fraction of steering_interval
+            tacho_desired = self.tacho_middle + turn * abs(self.steering_interval) * STEERING_DAMPENING
+            tacho_diff = tacho_cur - tacho_desired
+            if tacho_diff < 0:
+                self.steering_motor.turn(
+                    power=STEERING_POWER,
+                    tacho_units=-tacho_diff
+                )
+            elif tacho_diff > 0:
+                self.steering_motor.turn(
+                    power=-STEERING_POWER,
+                    tacho_units=tacho_diff
+                )
+
+        # lock steering_motor
+        self.steering_motor.brake()
 
     def keep_alive(self):
         '''
@@ -202,91 +289,10 @@ class ScoutRobo(object):
         '''
         self.locked = False
 
-    def go_forward_forever(self, power=80):
+    def go_forward(self, power=80):
         for motor in self.motors:
             motor.run(power)
-
-    def go_backward_forever(self, power=80):
-        for motor in self.motors:
-            motor.run(-power)
 
     def stop(self):
         for motor in self.motors:
             motor.idle()
-        # self.steering_motor.reset_position(True)
-        '''
-        tacho = self.steering_motor.get_tacho()
-        count = tacho.tacho_count
-        print(tacho)
-        if abs(count) > 0:
-            self.steering_motor.turn(power=80* -(count/-count), tacho_units=1)
-        '''
-        # self.steering_motor.brake()
-
-    def go_forward(self, power=80, ftime=1):
-        if self.locked:
-            return
-        for motor in self.motors:
-            motor.run(power)
-
-        self.timed_checks(ftime)
-
-        for motor in self.motors:
-            motor.idle()
-
-    def go_backward(self, power=80, ftime=1):
-        if self.locked:
-            return
-        for motor in self.motors:
-            motor.run(-power)
-
-        self.timed_checks(ftime)
-
-        for motor in self.motors:
-            motor.idle()
-
-    def turn_left(self, power=80, ftime=1):
-        if self.locked:
-            return
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(-power)
-            elif motor == self.motor_right:
-                motor.run(power)
-
-        self.timed_checks(ftime)
-
-        for motor in self.motors:
-            motor.idle()
-
-    def turn_right(self, power=80, ftime=1):
-        if self.locked:
-            return
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(power)
-            elif motor == self.motor_right:
-                motor.run(-power)
-
-        self.timed_checks(ftime)
-
-        for motor in self.motors:
-            motor.idle()
-
-    def turn_right_forever(self, power=80):
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(power)
-            elif motor == self.motor_right:
-                motor.run(-power)
-
-    def turn_left_forever(self, power=80):
-        for motor in self.motors:
-            if motor == self.motor_left:
-                motor.run(-power)
-            elif motor == self.motor_right:
-                motor.run(power)
-
-    def fire_cannon(self, balls=1):
-        self.cannon_motor.turn(127, 360 * balls)
-        self.cannon_motor.idle()
