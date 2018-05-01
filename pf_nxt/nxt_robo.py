@@ -50,7 +50,7 @@ class ScoutRobo(object):
 
         # Initialize pad and autopilot modules
         # TODO: do not start padmode if server
-        self.pad_controller = PadController(self)
+        # self.pad_controller = PadController(self)
         self.autopilot = AutoPilot(self)
 
         self.calibrate()
