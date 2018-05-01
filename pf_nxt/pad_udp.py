@@ -77,7 +77,7 @@ class PadController(object):
                 'turn': turn,
             })
 
-            UDP_IP = "192.168.43.32"
+            UDP_IP = "192.168.43.173"
             UDP_PORT = 14242
             # MESSAGE = "Hello, World!"
 

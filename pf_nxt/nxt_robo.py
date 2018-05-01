@@ -49,6 +49,7 @@ class ScoutRobo(object):
         self.player = Nxt_Player(self.brick)
 
         # Initialize pad and autopilot modules
+        # TODO: do not start padmode if server
         self.pad_controller = PadController(self)
         self.autopilot = AutoPilot(self)
 
