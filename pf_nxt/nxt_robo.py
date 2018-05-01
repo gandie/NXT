@@ -84,7 +84,7 @@ class ScoutRobo(object):
         print('left max', tacho_one)
         direction = -1
         self.steering_motor.run(power=direction * 60)
-        time.sleep(15)
+        time.sleep(20)
         self.steering_motor.brake()
         tacho = self.steering_motor.get_tacho()
         tacho_two = tacho.tacho_count
