@@ -2,15 +2,16 @@ import socket
 import pygame
 import time
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-print('Connected, starting receive loop')
-
-done = False
-sock.connect(("192.168.43.173", 14243))
 
 while True:
 
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        sock.connect(("192.168.43.173", 14243))
+    except:
+        print('connect failed')
+        pass
     print('next')
 
     received = []
@@ -30,4 +31,5 @@ while True:
     except:
         print('failed')
         pass
-    time.sleep(1)
+    sock.close()
+    time.sleep(.1)
