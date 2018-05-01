@@ -32,4 +32,4 @@ while True:
         print('failed')
         pass
     sock.close()
-    time.sleep(.1)
+    time.sleep(.5)

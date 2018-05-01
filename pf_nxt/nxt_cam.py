@@ -1,6 +1,7 @@
 import pygame
 import pygame.camera
 import socket
+import time
 
 PORT = 14243
 
@@ -29,6 +30,7 @@ class NxtCam(object):
             data = pygame.image.tostring(self.img, "RGB")
             connection.sendall(data)
             connection.close()
+            time.sleep(.5)
 
 
 if __name__ == '__main__':
