@@ -24,7 +24,7 @@ class NxtCam(object):
     def run(self):
         while True:
             connection, address = self.sock.accept()
-            print('CONNECTED to %s' % address)
+            print('CONNECTED')
             self.cam.get_image(self.img)
             data = pygame.image.tostring(self.img, "RGB")
             connection.sendall(data)
