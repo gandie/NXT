@@ -59,7 +59,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Change baddr and pin for your robot
-    robo = ScoutRobo(baddr=args.baddr, pin=args.secretpin)
+    robo = ScoutRobo(baddr=args.baddr, pin=args.secretpin, direct=True)
     print('Robo initialized')
     if args.gamepad:
         robo.pad_controller.run_gamepad()

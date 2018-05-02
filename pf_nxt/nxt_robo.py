@@ -19,7 +19,7 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, baddr, pin):
+    def __init__(self, baddr, pin, direct=False):
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
@@ -50,7 +50,8 @@ class ScoutRobo(object):
 
         # Initialize pad and autopilot modules
         # TODO: do not start padmode if server
-        # self.pad_controller = PadController(self)
+        if direct:
+            self.pad_controller = PadController(self)
         self.autopilot = AutoPilot(self)
 
         self.calibrate()
@@ -76,7 +77,7 @@ class ScoutRobo(object):
         print('calibrating...')
         direction = 1
         self.steering_motor.run(power=direction * 60)
-        time.sleep(10)
+        time.sleep(20)
         self.steering_motor.brake()
         tacho = self.steering_motor.get_tacho()
         tacho_one = tacho.tacho_count
@@ -84,7 +85,7 @@ class ScoutRobo(object):
         print('left max', tacho_one)
         direction = -1
         self.steering_motor.run(power=direction * 60)
-        time.sleep(20)
+        time.sleep(40)
         self.steering_motor.brake()
         tacho = self.steering_motor.get_tacho()
         tacho_two = tacho.tacho_count
@@ -146,12 +147,13 @@ class ScoutRobo(object):
         # do not react to forward/turn values smaller than...
         STEERING_MARGIN = 0.1
         # fraction of steering interval used, 1 means full (not recommended!)
-        STEERING_DAMPENING = 0.5
+        STEERING_DAMPENING = 0.8
         # power used on steering motor, between ~60 and 127
         STEERING_POWER = 90
 
         # check if forward/backward has to be performed
         # 60 is minimum power and maximum is 127
+        forward *= -1
         if forward < -STEERING_MARGIN:
             self.go_forward(power=(-60 + 67 * forward))
         if forward > STEERING_MARGIN:
@@ -179,7 +181,7 @@ class ScoutRobo(object):
         else:  # ...or perform steering by
             # calculating difference to middle position based on turn value
             # avoid oversteering, only use fraction of steering_interval
-            tacho_desired = self.tacho_middle + turn * abs(self.steering_interval) * STEERING_DAMPENING
+            tacho_desired = self.tacho_middle + -turn * abs(self.steering_interval) * STEERING_DAMPENING
             tacho_diff = tacho_cur - tacho_desired
             if tacho_diff < 0:
                 self.steering_motor.turn(
