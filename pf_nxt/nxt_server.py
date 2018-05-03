@@ -32,5 +32,6 @@ class NxtServer(object):
                 print('Got valid data, moving...', data_json)
                 self.robo.move(forward, turn)
             except Exception as e:
-                print('bad data or something', data)
-                print(e)
+                pass
+                # print('bad data or something', data)
+                # print(e)
