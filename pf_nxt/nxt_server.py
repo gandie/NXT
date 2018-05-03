@@ -23,7 +23,8 @@ class NxtServer(object):
             try:
                 data = self.sock.recv(128)  # buffer size is 1024 bytes
                 print('received')
-            except:
+            except Exception as e:
+                print(e)
                 data = ''
             try:
                 data_json = json.loads(data)
@@ -32,6 +33,5 @@ class NxtServer(object):
                 print('Got valid data, moving...', data_json)
                 self.robo.move(forward, turn)
             except Exception as e:
-                pass
                 # print('bad data or something', data)
-                # print(e)
+                print(e)

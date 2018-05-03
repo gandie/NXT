@@ -25,7 +25,7 @@ while True:
     print('received')
     # print(dataset)
     try:
-        image = pygame.image.fromstring(dataset, (640, 480), "RGB")
+        image = pygame.image.fromstring(dataset, (320, 240), "RGB")
         pygame.image.save(image, "test.jpg")
         print('success!')
     except:
