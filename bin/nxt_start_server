@@ -56,10 +56,22 @@ if __name__ == '__main__':
         default='1234'
     )
 
+    parser.add_argument(
+        '-m',
+        '--method',
+        help='Method to access NXT',
+        type=str,
+        default='bluetooth'
+    )
+
     args = parser.parse_args()
 
     # Change baddr and pin for your robot
-    robo = ScoutRobo(baddr=args.baddr, pin=args.secretpin)
+    robo = ScoutRobo(
+        baddr=args.baddr,
+        pin=args.secretpin,
+        method=args.method
+    )
     print('Robo initialized')
     server = NxtServer(robo, ip=args.ip, port=args.port)
     print('Server initialized')

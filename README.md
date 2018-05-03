@@ -19,6 +19,9 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
+USB-Setup (udev-rule) and more:
+https://github.com/Eelviny/nxt-python/wiki/Installation
+
 Modify motor.py of this driver (nxt-python-2.2.2) to achieve higher accuracy
 using bluetooth.
 

@@ -56,10 +56,23 @@ if __name__ == '__main__':
         default=False
     )
 
+    parser.add_argument(
+        '-m',
+        '--method',
+        help='Method to access NXT',
+        type=str,
+        default='bluetooth'
+    )
+
     args = parser.parse_args()
 
     # Change baddr and pin for your robot
-    robo = ScoutRobo(baddr=args.baddr, pin=args.secretpin, direct=True)
+    robo = ScoutRobo(
+        baddr=args.baddr,
+        pin=args.secretpin,
+        direct=True,
+        method=args.method
+    )
     print('Robo initialized')
     if args.gamepad:
         robo.pad_controller.run_gamepad()

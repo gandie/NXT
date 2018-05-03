@@ -4,6 +4,7 @@
 from nxt.motor import *
 from nxt.sensor import *
 from nxt.bluesock import BlueSock
+from nxt.locator import Method, find_one_brick
 
 import time
 
@@ -19,7 +20,7 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, baddr, pin, direct=False):
+    def __init__(self, baddr, pin, direct=False, method='bluetooth'):
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
@@ -27,11 +28,14 @@ class ScoutRobo(object):
         :param pin: The pin to ensure the connection
         '''
 
-        # Pair with nxt via bluetooth
-        self.stable_connection = Pair(baddr, pin)
-
         # Connect to nxt via bluetooth
-        self.brick = BlueSock(baddr).connect()
+        if method == 'bluetooth':
+            # Pair with nxt via bluetooth
+            self.stable_connection = Pair(baddr, pin)
+            self.brick = BlueSock(baddr).connect()
+        elif method == 'usb':
+            usb_only = Method(usb=True, bluetooth=False, fantomusb=True)
+            self.brick = find_one_brick(method=usb_only, debug=True)
 
         # initialize basic functions
         self.init_motors()
