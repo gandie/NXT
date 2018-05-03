@@ -6,7 +6,7 @@ class NxtServer(object):
     '''
     Simple server receiving JSON data to control robot via UDP
     '''
-    def __init__(self, robo, ip='0.0.0.0', port=14242):
+    def __init__(self, robo, ip='192.168.43.173', port=14242):
         self.ip = ip
         self.port = int(port)
         self.robo = robo

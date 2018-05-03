@@ -151,9 +151,11 @@ class ScoutRobo(object):
         # power used on steering motor, between ~60 and 127
         STEERING_POWER = 90
 
+        # TODO: find a better way for this
+        # alter direction, needed after mechanical changes
+        forward *= -1
         # check if forward/backward has to be performed
         # 60 is minimum power and maximum is 127
-        forward *= -1
         if forward < -STEERING_MARGIN:
             self.go_forward(power=(-60 + 67 * forward))
         if forward > STEERING_MARGIN:
