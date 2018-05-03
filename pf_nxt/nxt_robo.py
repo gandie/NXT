@@ -144,10 +144,13 @@ class ScoutRobo(object):
         and 1
         '''
 
+        if abs(front) > 1 or abs(turn) > 1:
+            return
+
         # do not react to forward/turn values smaller than...
         STEERING_MARGIN = 0.1
         # fraction of steering interval used, 1 means full (not recommended!)
-        STEERING_DAMPENING = 0.8
+        STEERING_DAMPENING = 0.6
         # power used on steering motor, between ~60 and 127
         STEERING_POWER = 90
 

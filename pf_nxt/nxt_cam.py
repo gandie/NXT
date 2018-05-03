@@ -12,9 +12,9 @@ class NxtCam(object):
         pygame.camera.init()
         self.camlist = pygame.camera.list_cameras()
         self.cam_path = self.camlist[0]
-        self.cam = pygame.camera.Camera(self.cam_path, (640, 480), "RGB")
+        self.cam = pygame.camera.Camera(self.cam_path, (320, 240), "RGB")
         self.cam.start()
-        self.img = pygame.Surface((640, 480))
+        self.img = pygame.Surface((320, 240))
         print('Cam initialized')
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
