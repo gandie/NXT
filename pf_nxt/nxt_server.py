@@ -36,4 +36,4 @@ class NxtServer(object):
             except Exception as e:
                 # print('bad data or something', data)
                 print(e)
-            time.sleep(.1)
+            time.sleep(.05)
