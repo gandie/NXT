@@ -30,7 +30,7 @@ class NxtCam(object):
             data = pygame.image.tostring(self.img, "RGB")
             connection.sendall(data)
             connection.close()
-            time.sleep(1)
+            time.sleep(.1)
 
 
 if __name__ == '__main__':
