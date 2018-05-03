@@ -15,12 +15,16 @@ class NxtServer(object):
             socket.SOCK_DGRAM  # UDP
         )
         self.sock.bind((self.ip, self.port))
+        self.sock.settimeout(.1)
 
     def run(self):
         print('Starting main loop')
         while True:
-            data = self.sock.recv(128)  # buffer size is 1024 bytes
-            print('received')
+            try:
+                data = self.sock.recv(128)  # buffer size is 1024 bytes
+                print('received')
+            except:
+                pass
             try:
                 data_json = json.loads(data)
                 forward = data_json['forward']
