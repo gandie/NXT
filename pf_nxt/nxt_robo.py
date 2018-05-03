@@ -144,7 +144,7 @@ class ScoutRobo(object):
         and 1
         '''
 
-        if abs(front) > 1 or abs(turn) > 1:
+        if abs(forward) > 1 or abs(turn) > 1:
             return
 
         # do not react to forward/turn values smaller than...
