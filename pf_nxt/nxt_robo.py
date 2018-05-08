@@ -14,6 +14,9 @@ from pf_nxt.nxt_autopilot import AutoPilot
 from pf_nxt.nxt_pair import Pair
 
 
+# TODO: make base class from this to implement mechanical specifics in subclasses
+# OR by composition (Motor Behaviours)
+# favor composition ;-)
 class ScoutRobo(object):
     '''
     ScoutRobo is a python class to control a lego-nxt robot by using bluetooth
@@ -28,12 +31,12 @@ class ScoutRobo(object):
         :param pin: The pin to ensure the connection
         '''
 
-        # Connect to nxt via bluetooth
         if method == 'bluetooth':
-            # Pair with nxt via bluetooth
+            # Pair with nxt via bluetooth before connecting
             self.stable_connection = Pair(baddr, pin)
             self.brick = BlueSock(baddr).connect()
         elif method == 'usb':
+            # explicitly deactivate bluetooth
             usb_only = Method(usb=True, bluetooth=False, fantomusb=True)
             self.brick = find_one_brick(method=usb_only, debug=True)
 
@@ -72,6 +75,9 @@ class ScoutRobo(object):
 
         self.steering_motor = Motor(self.brick, PORT_C)
         self.steering_motor.brake()
+
+        self.tower_motor = Motor(self.brick, PORT_B)
+        self.tower_motor.brake()
 
     def calibrate(self):
         '''
@@ -142,12 +148,13 @@ class ScoutRobo(object):
                 continue
             self.sensors[sensor_name] = sensor_instance
 
-    def move(self, forward, turn):
+    def move(self, forward, turn, tower=0):
         '''
         move robot based on forward and turn values which should be between -1
         and 1
         '''
 
+        # abort if values out of range
         if abs(forward) > 1 or abs(turn) > 1:
             return
 
@@ -203,8 +210,18 @@ class ScoutRobo(object):
                     tacho_units=tacho_diff
                 )
 
+        if tower > 0:
+            self.turn_tower(power=60)
+        elif tower < 0:
+            self.turn_tower(power=-60)
+        elif tower == 0:
+            self.tower_motor.brake()
+
         # lock steering_motor
         self.steering_motor.brake()
+
+    def turn_tower(self, power=80):
+        self.tower_motor.run(power=power)
 
     def keep_alive(self):
         '''

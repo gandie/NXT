@@ -48,10 +48,12 @@ class PadController(object):
 
         done = False
 
+        calibrated = False
+
         # main-loop to acquire joystick-events and react to them
         while not done:
 
-            # get pygame-events first
+            # get pygame-events first, this loop is mandatory for pygame
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
@@ -60,6 +62,18 @@ class PadController(object):
                 if event.type == pygame.JOYBUTTONUP:
                     print 'buttton released'
 
+            # initialize shoulder axes which may return wrong values at start
+            # without this
+            if not calibrated:
+                print('Please press down both shoulder axes to continue')
+                tower_left = self.pad.get_axis(2)
+                tower_right = self.pad.get_axis(5)
+                print(tower_left, tower_right)
+                if round(tower_left) == 1 and round(tower_right) == 1:
+                    calibrated = True
+                else:
+                    continue
+
             # main buttons
             button_a = self.pad.get_button(0)
             button_b = self.pad.get_button(1)
@@ -67,14 +81,31 @@ class PadController(object):
             button_y = self.pad.get_button(3)
 
             # initialize axes for movement
+            # LOGITECH CONTROLLER LB:
+            # axis 0 : left stick left/right [-1,1] default 0
+            # axis 1 : left stick up/down [-1,1] default 0
+            # axis 2 : left shoulder [-1,1] default -1
+            # axis 3 : right stick left/right [-1,1] default 0
+            # axis 4 : right stick up/down [-1,1] default 0
+            # axis 5 : right shoulder [-1,1] default -1
             front = self.pad.get_axis(4)
             turn = self.pad.get_axis(0)  # 1,2,3
             turn = round(turn, 2)  # no need to be exact here...
             front = round(front, 2)
 
+            tower = 0
+            tower_left = self.pad.get_axis(2)
+            tower_right = self.pad.get_axis(5)
+
+            if tower_left > -1:
+                tower = -1
+            elif tower_right > -1:
+                tower = 1
+
             message = json.dumps({
                 'forward': front,
                 'turn': turn,
+                'tower': tower,
             })
 
             UDP_IP = "192.168.43.173"
@@ -84,7 +115,7 @@ class PadController(object):
             self.sock.sendto(message, (UDP_IP, UDP_PORT))
 
             time.sleep(.5)
-            print(turn, front)
+            print(turn, front, tower)
 
 
 if __name__ == '__main__':

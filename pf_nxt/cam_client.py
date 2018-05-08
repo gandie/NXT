@@ -3,6 +3,8 @@ import pygame
 import time
 
 
+assert False, 'dead, replaced by usage of motion!'
+
 while True:
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

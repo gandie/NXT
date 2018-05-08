@@ -64,7 +64,7 @@ class Pair(object):
             except:
                 pass
         else:
-            raise Exception("Couldn't connect to blutooth device, a second try will mostly fix it!")
+            raise Exception("Couldn't connect to bluetooth device, a second try will mostly fix it!")
 
         self.proc.sendline(self._pin)
         self.proc.expect("Pairing successful")
