@@ -84,18 +84,20 @@ class ScoutRobo(object):
         turn steering motor to extreme positions and calculate middle position
         from both end positions
         '''
+
+        '''
         print('calibrating...')
         direction = 1
-        self.steering_motor.run(power=direction * 60)
-        time.sleep(20)
+        self.steering_motor.run(power=direction * 120)
+        time.sleep(5)
         self.steering_motor.brake()
         tacho = self.steering_motor.get_tacho()
         tacho_one = tacho.tacho_count
         self.max_left = tacho_one
         print('left max', tacho_one)
         direction = -1
-        self.steering_motor.run(power=direction * 60)
-        time.sleep(40)
+        self.steering_motor.run(power=direction * 120)
+        time.sleep(10)
         self.steering_motor.brake()
         tacho = self.steering_motor.get_tacho()
         tacho_two = tacho.tacho_count
@@ -110,16 +112,21 @@ class ScoutRobo(object):
             tacho_cur = tacho.tacho_count
             tacho_diff = self.tacho_middle - tacho_cur
             if tacho_diff > 0:
-                self.steering_motor.turn(power=50, tacho_units=tacho_diff)
+                self.steering_motor.turn(power=120, tacho_units=tacho_diff)
                 time.sleep(1)
             elif tacho_diff < 0:
-                self.steering_motor.turn(power=-50, tacho_units=-tacho_diff)
+                self.steering_motor.turn(power=-120, tacho_units=-tacho_diff)
                 time.sleep(1)
 
         tacho = self.steering_motor.get_tacho()
         tacho_middle_now = tacho.tacho_count
         self.steering_motor.idle()
         print('calibration done', tacho_one, tacho_two, self.tacho_middle, tacho_middle_now)
+        '''
+        tacho = self.steering_motor.get_tacho()
+        self.tacho_middle = tacho.tacho_count
+        self.steering_interval = 7200
+
 
     def init_sensors(self):
         '''
@@ -161,9 +168,9 @@ class ScoutRobo(object):
         # do not react to forward/turn values smaller than...
         STEERING_MARGIN = 0.1
         # fraction of steering interval used, 1 means full (not recommended!)
-        STEERING_DAMPENING = 0.6
+        STEERING_DAMPENING = 0.1
         # power used on steering motor, between ~60 and 127
-        STEERING_POWER = 90
+        STEERING_POWER = 120
 
         # TODO: find a better way for this
         # alter direction, needed after mechanical changes
@@ -183,13 +190,15 @@ class ScoutRobo(object):
             self.stop()
         if abs(turn) < STEERING_MARGIN:
             # go to middle position
+            print('To middle')
             tacho_diff = self.tacho_middle - tacho_cur
-            if tacho_diff > 0:
+            tacho_steer = not abs(tacho_diff) < 90
+            if tacho_diff > 0 and tacho_steer:
                 self.steering_motor.turn(
                     power=STEERING_POWER,
                     tacho_units=tacho_diff
                 )
-            elif tacho_diff < 0:
+            elif tacho_diff < 0 and tacho_steer:
                 self.steering_motor.turn(
                     power=-STEERING_POWER,
                     tacho_units=-tacho_diff
