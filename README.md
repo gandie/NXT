@@ -9,7 +9,7 @@
 
 Somehting like this in bash (not yet tested!):
 ```
-sudo apt-get install libbluetooth-dev python2-virtualenv
+sudo apt-get install libbluetooth-dev python-virtualenv
 virtualenv -p python2 venv2
 . ./venv2/bin/activate
 wget https://github.com/Eelviny/nxt-python/archive/v2.2.2.zip
@@ -24,6 +24,13 @@ https://github.com/Eelviny/nxt-python/wiki/Installation
 
 Modify motor.py of this driver (nxt-python-2.2.2) to achieve higher accuracy
 using bluetooth.
+
+Test if everything works fine, from inside the repository:
+```
+nxt_direct -m bluetooth -g
+```
+
+Read the text from the console and follow instructions to continue.
 
 # Bluetooth Pairing
 
