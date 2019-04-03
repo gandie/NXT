@@ -52,6 +52,8 @@ class ScoutRobo(object):
         # getting orders from http-server
         self.locked = False
 
+        self.calibrating = False
+
         # player for beeps and stuff
         self.player = Nxt_Player(self.brick)
 
@@ -85,28 +87,38 @@ class ScoutRobo(object):
         from both end positions
         '''
 
-        '''
+        self.calibrating = True
         print('calibrating...')
         direction = 1
-        self.steering_motor.run(power=direction * 120)
-        time.sleep(5)
+        self.steering_motor.run(power=direction * 60)
+
+        # time.sleep(5)
+        self.touch_right = self.sensors["touch_right"].get_sample()
+        while not self.touch_right:
+            time.sleep(.01)
+            self.touch_right = self.sensors["touch_right"].get_sample()
+            print(self.touch_right)
+
         self.steering_motor.brake()
-        tacho = self.steering_motor.get_tacho()
-        tacho_one = tacho.tacho_count
-        self.max_left = tacho_one
-        print('left max', tacho_one)
+        self.max_right = self.steering_motor.get_tacho().tacho_count
+        print('max right', self.max_right)
         direction = -1
-        self.steering_motor.run(power=direction * 120)
-        time.sleep(10)
+        self.steering_motor.run(power=direction * 60)
+        time.sleep(1)
+        # time.sleep(10)
+
+        self.touch_left = self.sensors["touch_left"].get_sample()
+        while not self.touch_left:
+            time.sleep(.01)
+            self.touch_left = self.sensors["touch_left"].get_sample()
+            print(self.touch_left)
+
         self.steering_motor.brake()
-        tacho = self.steering_motor.get_tacho()
-        tacho_two = tacho.tacho_count
-        self.max_right = tacho_two
-        print('max right', tacho_two)
-        interval = tacho_one - tacho_two
-        self.steering_interval = interval / 2
-        # middle = interval / 2
-        self.tacho_middle = tacho_two + self.steering_interval
+        self.max_left = self.steering_motor.get_tacho().tacho_count
+        print('max left', self.max_left)
+        self.steering_interval = (self.max_right - self.max_left) / 2
+        self.tacho_middle = self.max_left + self.steering_interval
+
         for i in range(5):
             tacho = self.steering_motor.get_tacho()
             tacho_cur = tacho.tacho_count
@@ -121,11 +133,13 @@ class ScoutRobo(object):
         tacho = self.steering_motor.get_tacho()
         tacho_middle_now = tacho.tacho_count
         self.steering_motor.idle()
-        print('calibration done', tacho_one, tacho_two, self.tacho_middle, tacho_middle_now)
+        self.calibrating = False
+        print('calibration done', self.max_left, self.max_right, self.tacho_middle, tacho_middle_now)
         '''
         tacho = self.steering_motor.get_tacho()
         self.tacho_middle = tacho.tacho_count
         self.steering_interval = 7200
+        '''
 
 
     def init_sensors(self):
@@ -137,13 +151,14 @@ class ScoutRobo(object):
         # map sensor names against driver class and port plugged in robot for
         # safe initialization
         SENSOR_MAP = {
-            "touch_left": (Touch, PORT_2),
-            "touch_right": (Touch, PORT_1),
-            "light_color": (Color20, PORT_3),  # unable to false-detect this one
-            "ultrasonic": (Ultrasonic, PORT_4),
+            "touch_left": (Touch, PORT_4),
+            "touch_right": (Touch, PORT_3),
+            #"light_color": (Color20, PORT_3),  # unable to false-detect this one
+            #"ultrasonic": (Ultrasonic, PORT_4),
         }
 
         self.sensors = {}
+        print('Initializing sensors')
         for sensor_name, sensor in SENSOR_MAP.items():
             sensor_class, port = sensor
             try:
@@ -154,6 +169,8 @@ class ScoutRobo(object):
                 print('Are you sure its plugged in?')  # Have u tried turning it off and on again?
                 continue
             self.sensors[sensor_name] = sensor_instance
+        print('Sensors: %s' % self.sensors)
+
 
     def move(self, forward, turn, tower=0):
         '''
@@ -168,13 +185,14 @@ class ScoutRobo(object):
         # do not react to forward/turn values smaller than...
         STEERING_MARGIN = 0.1
         # fraction of steering interval used, 1 means full (not recommended!)
-        STEERING_DAMPENING = 0.1
+        STEERING_DAMPENING = 0.9
         # power used on steering motor, between ~60 and 127
         STEERING_POWER = 120
 
         # TODO: find a better way for this
         # alter direction, needed after mechanical changes
         forward *= -1
+        turn *= -1
         # check if forward/backward has to be performed
         # 60 is minimum power and maximum is 127
         if forward < -STEERING_MARGIN:
@@ -182,8 +200,7 @@ class ScoutRobo(object):
         if forward > STEERING_MARGIN:
             self.go_forward(power=(60 + 67 * forward))
 
-        tacho = self.steering_motor.get_tacho()
-        tacho_cur = tacho.tacho_count
+        tacho_cur = self.steering_motor.get_tacho().tacho_count
 
         # stop robot if nothing is found
         if abs(forward) < STEERING_MARGIN:
@@ -192,7 +209,7 @@ class ScoutRobo(object):
             # go to middle position
             print('To middle')
             tacho_diff = self.tacho_middle - tacho_cur
-            tacho_steer = not abs(tacho_diff) < 90
+            tacho_steer = not abs(tacho_diff) < 10
             if tacho_diff > 0 and tacho_steer:
                 self.steering_motor.turn(
                     power=STEERING_POWER,
@@ -264,6 +281,27 @@ class ScoutRobo(object):
                 return False
         else:
             return False
+
+    def self_calibrate(self):
+        self.touch_left = self.sensors["touch_left"].get_sample()
+        self.touch_right = self.sensors["touch_right"].get_sample()
+
+        if self.touch_left:
+            self.max_left = self.steering_motor.get_tacho().tacho_count
+            self.steering_interval = (self.max_right - self.max_left) / 2
+            self.tacho_middle = self.max_left + self.steering_interval
+
+        if self.touch_right:
+            self.max_right = self.steering_motor.get_tacho().tacho_count
+            self.steering_interval = (self.max_right - self.max_left) / 2
+            self.tacho_middle = self.max_right - self.steering_interval
+
+        '''
+        if self.touch_left or self.touch_right:
+            self.steering_interval = (self.max_right - self.max_left) / 2
+            self.tacho_middle = self.max_left + self.steering_interval
+        '''
+        print('New calication done, tacho_middle: %s' % self.tacho_middle)
 
     def check_collision(self):
         '''

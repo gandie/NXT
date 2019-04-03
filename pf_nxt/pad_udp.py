@@ -108,7 +108,7 @@ class PadController(object):
                 'tower': tower,
             })
 
-            UDP_IP = "192.168.43.173"
+            UDP_IP = "127.0.0.1"
             UDP_PORT = 14242
             # MESSAGE = "Hello, World!"
 

@@ -5,6 +5,7 @@ import pygame
 import thread
 import time
 
+
 class PadController(object):
 
     '''
@@ -58,6 +59,11 @@ class PadController(object):
                 if event.type == pygame.JOYBUTTONUP:
                     print 'buttton released'
 
+            if self.robo.calibrating:
+                continue
+
+            # self.robo.self_calibrate()
+
             # main buttons
             button_a = self.pad.get_button(0)
             button_b = self.pad.get_button(1)
@@ -71,6 +77,8 @@ class PadController(object):
             if button_b:
                 if not self.robo.player.playing_song:
                     thread.start_new_thread(self.robo.player.play_song, ('schland',))
+            if button_x:
+                self.robo.calibrate()
 
             # initialize axes for movement
             front = self.pad.get_axis(4)
