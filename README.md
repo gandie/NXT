@@ -9,7 +9,7 @@
 
 Somehting like this in bash (not yet tested!):
 ```
-sudo apt-get install libbluetooth-dev
+sudo apt-get install libbluetooth-dev python2-virtualenv
 virtualenv -p python2 venv2
 . ./venv2/bin/activate
 wget https://github.com/Eelviny/nxt-python/archive/v2.2.2.zip
