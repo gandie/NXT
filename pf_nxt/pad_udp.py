@@ -2,7 +2,7 @@ import pygame
 import time
 import socket
 import json
-
+import argparse
 
 class PadController(object):
 
@@ -10,8 +10,10 @@ class PadController(object):
     module to controll nxt-robot using gamepad
     '''
 
-    def __init__(self):
-
+    def __init__(self, UDP_IP, UDP_PORT):
+        self.UDP_IP=UDP_IP
+        self.UDP_PORT=UDP_PORT
+        
         self.initialize_pad()
 
         self.sock = socket.socket(
@@ -108,16 +110,35 @@ class PadController(object):
                 'tower': tower,
             })
 
-            UDP_IP = "127.0.0.1"
-            UDP_PORT = 14242
+            # UDP_IP = "127.0.0.1"
+            # UDP_PORT = 14242
             # MESSAGE = "Hello, World!"
 
-            self.sock.sendto(message, (UDP_IP, UDP_PORT))
+            self.sock.sendto(message, (self.UDP_IP, self.UDP_PORT))
 
             time.sleep(.5)
             print(turn, front, tower)
 
 
 if __name__ == '__main__':
-    controller = PadController()
+    parser = argparse.ArgumentParser()
+    # choose ip
+    parser.add_argument(
+        '-i',
+        '--ip',
+        help='IP address of your server. Default is 0.0.0.0',
+        type=str,
+        default='0.0.0.0'
+    )
+    # choose port
+    parser.add_argument(
+        '-p',
+        '--port',
+        help='Port used by your server. Default is 14242',
+        type=int,
+        default=14242
+    )
+    args = parser.parse_args()
+    
+    controller = PadController(UDP_IP=args.ip, UDP_PORT=args.port)
     controller.run_gamepad()
