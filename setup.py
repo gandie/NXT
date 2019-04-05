@@ -33,6 +33,6 @@ setup(
         'pf_nxt',
     ],
     license='GPLv3',
-    scripts=['bin/nxt_direct', 'bin/nxt_start_server'],
+    scripts=['bin/nxt_direct', 'bin/nxt_start_server', 'bin/nxt_start_client'],
     platforms=['Linux', ],
 )
