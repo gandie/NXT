@@ -118,27 +118,3 @@ class PadController(object):
 
             time.sleep(.5)
             print(turn, front, tower)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    # choose ip
-    parser.add_argument(
-        '-i',
-        '--ip',
-        help='IP address of your server. Default is 0.0.0.0',
-        type=str,
-        default='0.0.0.0'
-    )
-    # choose port
-    parser.add_argument(
-        '-p',
-        '--port',
-        help='Port used by your server. Default is 14242',
-        type=int,
-        default=14242
-    )
-    args = parser.parse_args()
-    
-    controller = PadController(UDP_IP=args.ip, UDP_PORT=args.port)
-    controller.run_gamepad()
