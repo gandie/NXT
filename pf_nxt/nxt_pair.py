@@ -26,7 +26,8 @@ class Pair(object):
 
     def clear_bluetooth(self):
         '''
-        Just removes the devise and stops the scanning, even if it's not needed. It won't hurt :)
+        Just removes the devise and stops the scanning, even if it's not needed
+        It won't hurt :)
         '''
         self.proc.sendline("remove " + self._baddr)
         self.proc.sendline("scan off")

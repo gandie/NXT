@@ -1,7 +1,24 @@
+# NXT
+
+Python Code to control a Lego NXT robot using various devices and technologies.
+
+Featured ways to control robot:
++ Directly using gamepad
++ Gamepad via UDP server
++ HTTP based remote control
++ Flask based webinterface (Accelerometer and VirtualJoystick.js)
+
 # Installation
+
 ## Beginners Guide
--Download repo
--open Terminal in Repo
+
++ Download repo
+
+```
+git clone https://github.com/gandie/NXT
+```
+
++ open Terminal in Repo
 
 ```
 chmod +x build_env.sh
@@ -9,10 +26,10 @@ chmod +x build_env.sh
 . ./venv3/bin/activate
 ```
 
-
 Then you can start the Script with:
 
 ### Online version
+
 ```
 nxt_start_server
 ```
@@ -28,17 +45,16 @@ If you want to use a PS3 Controller you can use the Command:
 nxt_direct -m bluetooth -g
 ```
 
+## Not recommended, only for advanced Users
 
++ Download bluetooth driver header files (to compile python bluetooth bindings)
++ Create virtualenv
++ Install last stable release of nxt python bindings into virtualenv
++ Keep the releasse for possible modifications
++ Install rest of the requirements into virtualenv via pip
++ Install this python module into virtualenv
 
-## Not recomended, only for advanced Users
--Download bluetooth driver header files (to compile python bluetooth bindings)
--Create virtualenv
--Install last stable release of nxt python bindings into virtualenv
--Keep the releasse for possible modifications
--Install rest of the requirements into virtualenv via pip
--Install this python module into virtualenv
-
-Somehting like this in bash (not yet tested!):
+Something like this in bash (not yet tested!):
 ```
 sudo apt-get install libbluetooth-dev python-virtualenv
 virtualenv -p python3 venv3
@@ -70,5 +86,5 @@ Read the text from the console and follow instructions to continue.
 
 # Bluetooth Pairing
 
-Kudos to FancyChaos for the awesome nxt_pair module doing all the work!
-###### Kudos to MagnusM1709 && Max Starke for working Websocket!
+###### Kudos to @FancyChaos for the awesome nxt_pair module doing all the work!
+###### Kudos to @MagnusM1709 && @bene017 Max Starke for working Websocket!

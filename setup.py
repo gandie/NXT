@@ -24,9 +24,9 @@ setup(
     version='0.1',
     description='PerFact Lego NXT library',
     long_description='''\
-        Toolksuite to run Lego NXT via bleutooth using Python
+        Toolsuite to run Lego NXT via bluetooth or USB using Python.
         Robot can either be run directly using a gamepad as well as remote
-        controlled using a simple HTTP server''',
+        controlled using a simple HTTP, UDP or websocket server''',
     author='Lars Bergmann',
     author_email='lb@perfact.de',
     packages=[

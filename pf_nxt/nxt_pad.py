@@ -9,7 +9,7 @@ import time
 class PadController(object):
 
     '''
-    module to controll nxt-robot using gamepad
+    module to controll nxt-robot using gamepad running in pygame loop
     '''
 
     def __init__(self, robo):

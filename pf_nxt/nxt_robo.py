@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from nxt. motor import *
+from nxt.motor import *
 from nxt.sensor import *
 from nxt.bluesock import BlueSock
 from nxt.locator import Method, find_one_brick
@@ -170,7 +170,6 @@ class ScoutRobo(object):
                 continue
             self.sensors[sensor_name] = sensor_instance
         print('Sensors: %s' % self.sensors)
-
 
     def move(self, forward, turn, tower=0):
         print(forward, turn)

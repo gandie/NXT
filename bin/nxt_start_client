@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-from pf_nxt.pad_udp import PadController
+from pf_nxt.nxt_pad_client import PadController
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

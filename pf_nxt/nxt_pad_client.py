@@ -4,6 +4,7 @@ import socket
 import json
 import argparse
 
+
 class PadController(object):
 
     '''
@@ -11,9 +12,9 @@ class PadController(object):
     '''
 
     def __init__(self, UDP_IP, UDP_PORT):
-        self.UDP_IP=UDP_IP
-        self.UDP_PORT=UDP_PORT
-        
+        self.UDP_IP = UDP_IP
+        self.UDP_PORT = UDP_PORT
+
         self.initialize_pad()
 
         self.sock = socket.socket(
@@ -33,8 +34,10 @@ class PadController(object):
         # find pads / joysticks
         pad_count = pygame.joystick.get_count()
         if pad_count != 1:
-            raise StandardError('More or less than one pad / joystick found. Dying...')
-        pad_index = pad_count - 1 # this will be 0...always...
+            raise StandardError(
+                'More or less than one pad / joystick found. Dying...'
+            )
+        pad_index = pad_count - 1  # this will be 0...always...
 
         # initialize pad
         self.pad = pygame.joystick.Joystick(pad_index)
@@ -44,8 +47,8 @@ class PadController(object):
     def run_gamepad(self):
         '''
         run robot in gamepad-mode. controll robot using generic x-box gamepad
-        if u wanna use another gamepad, buttons and axes have to be reconfigured
-        depending on your device
+        if u wanna use another gamepad, buttons and axes have to be
+        reconfigured depending on your device
         '''
 
         done = False

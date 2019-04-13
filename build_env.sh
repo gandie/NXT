@@ -11,6 +11,6 @@ cd ..
 pip install -r requirements.txt >> LEGO.log
 python3 setup.py install >> LEGO.log
 cd pf_nxt/website
-chmod +x bash.sh >> ../../LEGO.log
+chmod +x run_flaskapp.sh >> ../../LEGO.log
 cd ..
 cd ..
