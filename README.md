@@ -1,5 +1,36 @@
 # Installation
+## Beginners Guide
+-Download repo
+-open Terminal in Repo
 
+```
+chmod +x build_env.sh
+./build_env.sh
+. ./venv3/bin/activate
+```
+
+
+Then you can start the Script with:
+
+### Online version
+```
+nxt_start_server
+```
+
+Then open in your Webbrowser localhost:5000 and press Create Websocket
+
+
+### Gamepad Version
+
+If you want to use a PS3 Controller you can use the Command:
+
+```
+nxt_direct -m bluetooth -g
+```
+
+
+
+## Not recomended, only for advanced Users
 -Download bluetooth driver header files (to compile python bluetooth bindings)
 -Create virtualenv
 -Install last stable release of nxt python bindings into virtualenv
@@ -10,15 +41,18 @@
 Somehting like this in bash (not yet tested!):
 ```
 sudo apt-get install libbluetooth-dev python-virtualenv
-virtualenv -p python2 venv2
-. ./venv2/bin/activate
-wget https://github.com/Eelviny/nxt-python/archive/v2.2.2.zip
-unzip v2.2.2.zip
-cd nxt-python-2.2.2
-python setup.py install
+virtualenv -p python3 venv3
+. ./venv3/bin/activate
+wget https://github.com/bene017/nxt-python/archive/master.zip
+unzip master.zip
+cd nxt-python-master
+python3 setup.py install
 cd ..
-pip install -r requirements.txt
-python setup.py install
+pip3 install -r requirements.txt
+python3 setup.py install
+cd pf_nxt/website
+chmod +x bash.sh
+cd ../..
 ```
 
 USB-Setup (udev-rule) and more:
@@ -37,3 +71,4 @@ Read the text from the console and follow instructions to continue.
 # Bluetooth Pairing
 
 Kudos to FancyChaos for the awesome nxt_pair module doing all the work!
+###### Kudos to MagnusM1709 && Max Starke for working Websocket!
