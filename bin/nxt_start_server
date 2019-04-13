@@ -89,15 +89,14 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print("LOCAL IP: ", args.ip)
     # Change baddr and pin for your robot
     robo = ScoutRobo(
         baddr=args.baddr,
         pin=args.secretpin,
         method=args.method
     )
-    print("Args WebMode:" + args.webmode)
     print('Robo initialized')
+    print("ARGUMENTS:", str(args))
     if args.webmode is True:
         print(robo, type(robo))
         t = threading.Thread(
@@ -106,7 +105,7 @@ if __name__ == '__main__':
             args=("cd pf_nxt/website && ls -la && pwd && ./run_flaskapp.sh",),
         )
         t.start()
-        initwebserver(robo, actSID, lastSeen, args.ip, args.port)
+        initwebserver(robo, args.ip, args.port)
         print('Websocket enabled')
     else:
         server = NxtServer(robo, ip=args.ip, port=args.port)

@@ -4,19 +4,21 @@ import websockets
 import os
 import json
 
-robot = 0
+robo = None
 
 actSID = "localhost"
 lastSeen = 0
+delay = 200
 
 
 async def hello(websocket, path):
     global actSID
     global lastSeen
+    assert robo, 'robo instance needed!'
     while True:
         name = await websocket.recv()
 
-        print (name)
+        print(name)
         try:
             allowed = False
             data_json = json.loads(name)
@@ -41,12 +43,14 @@ async def hello(websocket, path):
             if comptime < sitetime + abs(delay) and allowed:
                 print ("Moving")
                 robo.move(forward, turn, tower)
-        except Exception:
+        except Exception as e:
             data_json = json.loads(name)
-            print("except")
+            print("except: %s" % e)
 
 
-def initwebserver(robo, actSID, lastSeen, ip, port):
+def initwebserver(robo_inst, ip, port):
+    global robo
+    robo = robo_inst
     print("Webserver Initalizing")
     start_server = websockets.serve(hello, str(ip), port)
     print("Webserver defined")

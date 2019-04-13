@@ -64,9 +64,9 @@ class Pair(object):
                 self.proc.sendline("pair " + self._baddr)
                 self.proc.expect("Enter PIN code", timeout=2)
                 break
-        except Exception:
+            except Exception:
                 pass
-        else:
+        else:  # read like nobreak
             raise Exception(
                 "Couldn't connect to bluetooth device, a second try will"
                 " mostly fix it!"
