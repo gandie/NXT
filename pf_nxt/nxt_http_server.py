@@ -158,33 +158,33 @@ def stop():
 
 
 def go_forward_forever():
-    print 'Going forward...'
+    print('Going forward...')
     robo.go_forward_forever()
 
 
 def go_backward_forever():
-    print 'Going forward...'
+    print('Going forward...')
     robo.go_backward_forever()
 
 
 def turn_left_forever():
-    print 'Turning right'
+    print('Turning right')
     robo.turn_left_forever()
 
 
 def turn_right_forever():
-    print 'Turning right'
+    print('Turning right')
     robo.turn_right_forever()
 
 
 def unlock():
-    print 'Unlocking...'
+    print('Unlocking...')
     if robo.locked:
-        print 'unlocking...'
+        print('Unlocking...')
         robo.unlock()
     else:
         robo.locked = True
-        print 'locking...'
+        print('locking...')
 
 
 def music():
@@ -201,11 +201,15 @@ if __name__ == '__main__':
     # Change baddr and pin for your robot
     robo = ScoutRobo(baddr="00:16:53:0D:14:AE", pin="1234")
     try:
-        print time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+        print(
+            time.asctime(), "Server Starts - %s:%s" % (HOST_NAME, PORT_NUMBER)
+        )
         httpd.serve_forever()
-    except:  # Doesn't matter what happens, if the server is broke just shut it down
+    except Exception:  # if the server is broke just shut it down
         print("Some general error in the server")
 
     print("Server shuts down...")
     httpd.server_close()
-    print time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
+    print(
+        time.asctime(), "Server Stops - %s:%s" % (HOST_NAME, PORT_NUMBER)
+    )
