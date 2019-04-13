@@ -14,8 +14,8 @@ from pf_nxt.nxt_autopilot import AutoPilot
 from pf_nxt.nxt_pair import Pair
 
 
-# TODO: make base class from this to implement mechanical specifics in subclasses
-# OR by composition (Motor Behaviours)
+# TODO: make base class from this to implement mechanical specifics in
+# subclasses OR by composition (Motor Behaviours)
 # favor composition ;-)
 class ScoutRobo(object):
     '''
@@ -134,18 +134,24 @@ class ScoutRobo(object):
         tacho_middle_now = tacho.tacho_count
         self.steering_motor.idle()
         self.calibrating = False
-        print('calibration done', self.max_left, self.max_right, self.tacho_middle, tacho_middle_now)
+        print(
+            'calibration done',
+            self.max_left,
+            self.max_right,
+            self.tacho_middle,
+            tacho_middle_now
+        )
         '''
         tacho = self.steering_motor.get_tacho()
         self.tacho_middle = tacho.tacho_count
         self.steering_interval = 7200
         '''
 
-
     def init_sensors(self):
         '''
         find and initialize sensors from ports of brick
-        useful sensors: 'touch_left', 'touch_right', 'light_color', 'ultrasonic'
+        useful sensors: 'touch_left', 'touch_right', 'light_color',
+        'ultrasonic'
         '''
 
         # map sensor names against driver class and port plugged in robot for
@@ -153,8 +159,8 @@ class ScoutRobo(object):
         SENSOR_MAP = {
             "touch_left": (Touch, PORT_4),
             "touch_right": (Touch, PORT_3),
-            #"light_color": (Color20, PORT_3),  # unable to false-detect this one
-            #"ultrasonic": (Ultrasonic, PORT_4),
+            # "light_color": (Color20, PORT_3),  # unable to false-detect this
+            # "ultrasonic": (Ultrasonic, PORT_4),
         }
 
         self.sensors = {}
@@ -165,8 +171,11 @@ class ScoutRobo(object):
                 sensor_instance = sensor_class(self.brick, port)
                 sensor_instance.get_sample()
             except Exception:
-                print('Init sensor %s on port %s failed.' % (sensor_name, port))
-                print('Are you sure its plugged in?')  # Have u tried turning it off and on again?
+                print(
+                    'Init sensor %s on port %s failed.' % (sensor_name, port)
+                )
+                # Have u tried turning it off and on again?
+                print('Are you sure its plugged in?')
                 continue
             self.sensors[sensor_name] = sensor_instance
         print('Sensors: %s' % self.sensors)
@@ -196,9 +205,9 @@ class ScoutRobo(object):
         # check if forward/backward has to be performed
         # 60 is minimum power and maximum is 127
         if forward < -STEERING_MARGIN:
-            self.go_forward(power= int(-60 + 67 * forward))
+            self.go_forward(power=int(-60 + 67 * forward))
         if forward > STEERING_MARGIN:
-            self.go_forward(power= int(60 + 67 * forward))
+            self.go_forward(power=int(60 + 67 * forward))
 
         tacho_cur = self.steering_motor.get_tacho().tacho_count
 
@@ -223,7 +232,8 @@ class ScoutRobo(object):
         else:  # ...or perform steering by
             # calculating difference to middle position based on turn value
             # avoid oversteering, only use fraction of steering_interval
-            tacho_desired = self.tacho_middle + -turn * abs(self.steering_interval) * STEERING_DAMPENING
+            turn_rel = turn * abs(self.steering_interval) * STEERING_DAMPENING
+            tacho_desired = self.tacho_middle - turn_rel
             tacho_diff = tacho_cur - tacho_desired
             if tacho_diff < 0 and not self.sensors["touch_left"].get_sample():
                 self.steering_motor.turn(
@@ -263,7 +273,6 @@ class ScoutRobo(object):
         method to acquire sensor data, called e.g. by external modules
         '''
 
-        # Fancy oneliner to create a new dictionary with old keys but new values
         telemetry = {k: v.get_sample() for k, v in self.sensors.items()}
 
         return telemetry

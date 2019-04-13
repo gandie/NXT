@@ -30,19 +30,20 @@ class PadController(object):
         # find pads / joysticks
         pad_count = pygame.joystick.get_count()
         if pad_count != 1:
-            raise StandardError('More or less than one pad / joystick found. Dying...')
-        pad_index = pad_count - 1 # this will be 0...always...
+            raise StandardError(
+                'More or less than one pad / joystick found. Dying...'
+            )
+        pad_index = pad_count - 1  # this will be 0...always...
 
         # initialize pad
         self.pad = pygame.joystick.Joystick(pad_index)
         self.pad.init()
 
-
     def run_gamepad(self):
         '''
         run robot in gamepad-mode. controll robot using generic x-box gamepad
-        if u wanna use another gamepad, buttons and axes have to be reconfigured
-        depending on your device
+        if u wanna use another gamepad, buttons and axes have to be
+        reconfigured depending on your device
         '''
 
         done = False
@@ -73,10 +74,12 @@ class PadController(object):
             # check buttons
             if button_a:
                 if not self.robo.player.playing_song:
-                    thread.start_new_thread(self.robo.player.play_song,())
+                    thread.start_new_thread(self.robo.player.play_song, ())
             if button_b:
                 if not self.robo.player.playing_song:
-                    thread.start_new_thread(self.robo.player.play_song, ('schland',))
+                    thread.start_new_thread(
+                        self.robo.player.play_song, ('schland',)
+                    )
             if button_x:
                 self.robo.calibrate()
 

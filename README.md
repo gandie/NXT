@@ -84,7 +84,5 @@ nxt_direct -m bluetooth -g
 
 Read the text from the console and follow instructions to continue.
 
-# Bluetooth Pairing
-
 ###### Kudos to @FancyChaos for the awesome nxt_pair module doing all the work!
 ###### Kudos to @MagnusM1709 && @bene017 Max Starke for working Websocket!

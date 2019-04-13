@@ -36,12 +36,14 @@ class Pair(object):
         '''
         Pairs the device
         '''
-        # TODO: Add a non hardcoded solution (This solution may not work with non english systems)
+        # TODO: Add a non hardcoded solution (This solution may not work with
+        # non english systems)
 
         print("Pairing with " + self._baddr + "...")
         self.proc = pexpect.spawn('bluetoothctl')
 
-        # Init fixes to make 100% sure that nothing will stop us!! (only works if agent is on)
+        # Init fixes to make 100% sure that nothing will stop us!! (only works
+        # if agent is on)
         self.clear_bluetooth()
 
         self.proc.sendline("agent on")
@@ -62,10 +64,13 @@ class Pair(object):
                 self.proc.sendline("pair " + self._baddr)
                 self.proc.expect("Enter PIN code", timeout=2)
                 break
-            except:
+        except Exception:
                 pass
         else:
-            raise Exception("Couldn't connect to bluetooth device, a second try will mostly fix it!")
+            raise Exception(
+                "Couldn't connect to bluetooth device, a second try will"
+                " mostly fix it!"
+            )
 
         self.proc.sendline(self._pin)
         self.proc.expect("Pairing successful")

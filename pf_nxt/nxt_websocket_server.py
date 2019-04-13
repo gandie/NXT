@@ -41,7 +41,7 @@ async def hello(websocket, path):
             if comptime < sitetime + abs(delay) and allowed:
                 print ("Moving")
                 robo.move(forward, turn, tower)
-        except:
+        except Exception:
             data_json = json.loads(name)
             print("except")
 

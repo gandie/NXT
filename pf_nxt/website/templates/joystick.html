@@ -28,10 +28,6 @@
 
   <script type = "text/javascript">
 
-
-
-
-
   function WebSocketTest() {
 
     if ("WebSocket" in window) {
@@ -74,7 +70,13 @@
       setInterval(function(){
         console.log(joystick.deltaX());
         console.log(joystick.deltaY());
-        ws.send(JSON.stringify({turn: joystick.deltaX(), forward: joystick.deltaY(), tower: "0", time: Date.now(), sid: "{{sessionID}}"}));
+        ws.send(JSON.stringify({
+          turn: joystick.deltaX(),
+          forward: joystick.deltaY(),
+          tower: "0",
+          time: Date.now(),
+          sid: "{{sessionID}}"
+        }));
       }, 500 );
 
 
@@ -88,12 +90,17 @@
   </script>
 
 </head>
-<h1> <a href = "javascript:WebSocketTest()">Run WebSocket</a> </h1>
-<h2> Websocket IP = {{ip}}:9998</h2>
-<h2> Session ID = {{sessionID}}</h2>
+<h1>
+  <a href="javascript:WebSocketTest()">Run WebSocket</a>
+</h1>
+<h2>Websocket IP = {{ip}}:9998</h2>
+<h2>Session ID = {{sessionID}}</h2>
 <body>
-  <div id="container"></div>
-  <div id = "sse">
+
+  <div id="container">
+  </div>
+
+  <div id="sse">
   </div>
 
 </body>
