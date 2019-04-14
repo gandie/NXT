@@ -224,15 +224,23 @@ VirtualJoystick.prototype._onMouseUp	= function(event)
 VirtualJoystick.prototype._onMouseDown	= function(event)
 {
 	event.preventDefault();
+	/*
 	var x	= event.clientX;
 	var y	= event.clientY;
+	*/
+	var x	= event.pageX;
+	var y	= event.pageY;
 	return this._onDown(x, y);
 }
 
 VirtualJoystick.prototype._onMouseMove	= function(event)
 {
+	/*
 	var x	= event.clientX;
 	var y	= event.clientY;
+	*/
+	var x	= event.pageX;
+	var y	= event.pageY;
 	return this._onMove(x, y);
 }
 

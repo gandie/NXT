@@ -2,13 +2,30 @@
 
 <html>
 <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <script src="static/jquery-3.4.0.min.js"></script>
+  <script src="static/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="static/bootstrap.min.css">
+
 </head>
 <body>
-  <h1>
-    <a href="joystick.html">Joystick-Steuerung</a>
-  </h1>
-  <h1>
-    <a href="accelerometer.html">Neigungssensor-Steuerung</a>
-  </h1>
+
+  <div class="jumbotron">
+    <h1 class="display-4">PerFact::NXT</h1>
+    <p class="lead">A webapp to remote control a Lego NXT robot.</p>
+    <hr class="my-4">
+    <p>Try out the new virtual joystick control!</p>
+    <a class="btn btn-primary btn-lg" href="joystick.html" role="button">Start</a>
+  </div>
+
+  <nav class="nav nav-pills flex-column flex-sm-row mb-3">
+    <a class="flex-sm-fill text-sm-center nav-link active" href="/">Menu</a>
+    <a class="flex-sm-fill text-sm-center nav-link" href="joystick.html">Joystick</a>
+    <a class="flex-sm-fill text-sm-center nav-link" href="accelerometer.html">Accelerometer</a>
+  </nav>
 </body>
 </html>

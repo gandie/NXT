@@ -11,21 +11,23 @@ lastSeen = 0
 delay = 200
 
 
-async def hello(websocket, path):
+async def runserver(websocket, path):
     global actSID
     global lastSeen
     assert robo, 'robo instance needed!'
     while True:
-        name = await websocket.recv()
+        data = await websocket.recv()
 
-        print(name)
+        print(data)
         try:
             allowed = False
-            data_json = json.loads(name)
+            data_json = json.loads(data)
             tempSID = data_json['sid']
-            forward = 0.02 * int(data_json['forward'])
-            turn = 0.02 * int(data_json['turn'])
+            forward = data_json['forward']
+            turn = data_json['turn']
             sitetime = int(data_json['time'])
+            comptime = time.time() * 1000
+            tower = 0
             if actSID == "localhost" or lastSeen + 10 < time.time():
                 print("new User")
                 actSID = data_json['sid']
@@ -35,24 +37,20 @@ async def hello(websocket, path):
                 if turn != 0 or forward != 0:
                     lastSeen = time.time()
                 allowed = True
-            forward = 0.02 * int(data_json['forward'])
-            turn = 0.02 * int(data_json['turn'])
-            sitetime = int(data_json['time'])
-            tower = 0
-            comptime = time.time() * 1000
             if comptime < sitetime + abs(delay) and allowed:
-                print ("Moving")
+                print("Moving allowed. Will call robo.move")
                 robo.move(forward, turn, tower)
         except Exception as e:
-            data_json = json.loads(name)
-            print("except: %s" % e)
+            print("Exception: %s" % e)
 
 
 def initwebserver(robo_inst, ip, port):
+
     global robo
     robo = robo_inst
+
     print("Webserver Initalizing")
-    start_server = websockets.serve(hello, str(ip), port)
+    start_server = websockets.serve(runserver, str(ip), port)
     print("Webserver defined")
     asyncio.get_event_loop().run_until_complete(start_server)
     print("Webserver Eventloop set")

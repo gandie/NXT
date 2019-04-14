@@ -181,12 +181,12 @@ class ScoutRobo(object):
         print('Sensors: %s' % self.sensors)
 
     def move(self, forward, turn, tower=0):
-        print(forward, turn)
         '''
         move robot based on forward and turn values which should be between -1
         and 1
         '''
 
+        print('Got args forward: %s turn: %s' % (forward, turn))
         # abort if values out of range
         if abs(forward) > 1 or abs(turn) > 1:
             return

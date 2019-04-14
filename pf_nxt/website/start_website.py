@@ -31,4 +31,11 @@ def accelo():
 @app.route('/joystick.html')
 def joystick():
     sid = getSID()
-    return render_template('joystick.html', ip=str(getip()), sessionID=str(sid))
+    ip = getip()
+    ws_url = "ws://%s:9998" % ip
+    return render_template(
+        'joystick.html',
+        ip=ip,
+        ws_url=ws_url,
+        sessionID=str(sid)
+    )
