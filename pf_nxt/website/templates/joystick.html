@@ -1,46 +1,52 @@
 <!DOCTYPE HTML>
 
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style type="text/css">
+      body {
+      overflow	: hidden;
+      padding		: 0;
+      margin		: 50;
+      background-color: #BBB;
+      }
+      #joystick-container {
+      height		: 350px;
+      /*
+      width		: 500px;
+      height: 100%;
+      min-height		: 1000px;
+      overflow	: hidden;
+      padding		: 0;
+      margin		: 0;
+      -webkit-user-select	: none;
+      -moz-user-select	: none;
+      */
+      }
+      #cam-container {
+      width		: 640px;
+      height		: 480px;
+      }
+    </style>
 
-  <style type="text/css">
-  body {
-    overflow	: hidden;
-    padding		: 0;
-    margin		: 50;
-    background-color: #BBB;
-  }
-  #joystick-container {
-    height		: 350px;
-    /*
-    width		: 500px;
-    height: 100%;
-    min-height		: 1000px;
-    overflow	: hidden;
-    padding		: 0;
-    margin		: 0;
-    -webkit-user-select	: none;
-    -moz-user-select	: none;
-    */
-  }
-  </style>
+    <script src="static/virtualjoystick.js"></script>
+    <script src="static/jquery-3.4.0.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
 
-  <script src="static/virtualjoystick.js"></script>
-  <script src="static/jquery-3.4.0.min.js"></script>
-  <script src="static/bootstrap.min.js"></script>
+    <script src="static/nxt_joystick.js"></script>
 
-  <script src="static/nxt_joystick.js"></script>
+    <link rel="stylesheet" href="static/bootstrap.min.css">
 
-  <link rel="stylesheet" href="static/bootstrap.min.css">
-
-</head>
-<body>
+  </head>
+  <body>
 
     <div class="bg-secondary mb-3" id="joystick-container">
     </div>
-
+    <div class="collapse" id="cam-collapse">
+      <iframe src="http://{{ip}}:8081" id="cam-container">
+      </iframe>
+    </div>
     <div class="btn-group-sm" role="group" aria-label="Basic example">
       <button type="button" onclick="init_joystick()" class="btn btn-primary mb-1">
         Initialize joystick
@@ -53,6 +59,9 @@
       </button>
       <button type="button" onclick="disconnect_ws()" class="btn btn-primary mb-1">
         Disconnect websocket
+      </button>
+      <button type="button" data-toggle="collapse" data-target="#cam-collapse" aria-expanded="false" aria-controls="cam-collapse" class="btn btn-primary mb-1">
+        Toggle Cam
       </button>
     </div>
 
@@ -90,5 +99,5 @@
       <a class="flex-sm-fill text-sm-center nav-link" href="accelerometer.html">Accelerometer</a>
     </nav>
 
-</body>
+  </body>
 </html>
