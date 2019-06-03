@@ -31,7 +31,7 @@ Then you can start the Script with:
 ### Online version
 
 ```
-nxt_start_server
+nxt_start_server -w
 ```
 
 Then open in your Webbrowser localhost:5000 and press Create Websocket
