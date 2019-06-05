@@ -37,7 +37,7 @@ class ScoutRobo(object):
             self.brick = BlueSock(baddr).connect()
         elif method == 'usb':
             # explicitly deactivate bluetooth
-            usb_only = Method(usb=True, bluetooth=False, fantomusb=True)
+            usb_only = Method(usb=True, bluetooth=False)
             self.brick = find_one_brick(method=usb_only, debug=True)
 
         # initialize basic functions

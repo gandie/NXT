@@ -76,11 +76,31 @@ function ws_send_joystick() {
     turn: turn,
     forward: forward,
     tower: "0",
+      pressed:false,  
     time: Date.now(),
     sid: "{{sessionID}}"
   }));
 
 }
+
+function calibrate() {
+    console.log("calibrating");
+    if ( !ws ) {
+	console.log("no websocket! aborting");
+	return;
+    }
+
+    ws.send(JSON.stringify({
+	turn: 0,
+	forward: 0,
+	tower: "0",
+	pressed:true,
+	time: Date.now(),
+	sid: "{{sessionID}}"
+    }));
+}
+
+
 
 function disconnect_ws() {
   if ( !ws ) {

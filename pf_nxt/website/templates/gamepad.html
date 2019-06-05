@@ -11,19 +11,6 @@
       margin		: 50;
       background-color: #BBB;
       }
-      #joystick-container {
-      height		: 350px;
-      /*
-      width		: 500px;
-      height: 100%;
-      min-height		: 1000px;
-      overflow	: hidden;
-      padding		: 0;
-      margin		: 0;
-      -webkit-user-select	: none;
-      -moz-user-select	: none;
-      */
-      }
       #cam-container {
       width		: 640px;
       height		: 480px;
@@ -34,7 +21,7 @@
     <script src="static/jquery-3.4.0.min.js"></script>
     <script src="static/bootstrap.min.js"></script>
 
-    <script src="static/nxt_joystick.js"></script>
+    <script src="static/nxt_gamepad.js"></script>
 
     <link rel="stylesheet" href="static/bootstrap.min.css">
 
@@ -48,12 +35,6 @@
       </iframe>
     </div>
     <div class="btn-group-sm" role="group" aria-label="Basic example">
-      <button type="button" onclick="init_joystick()" class="btn btn-primary mb-1">
-        Initialize joystick
-      </button>
-      <button type="button" onclick="destroy_joystick()" class="btn btn-primary mb-1">
-        Destroy joystick
-      </button>
       <button type="button" onclick="create_ws()" class="btn btn-primary mb-1">
         Connect websocket
       </button>
@@ -64,8 +45,8 @@
         Toggle Cam
       </button>
       <button type="button" onclick="calibrate()" class="btn btn-primary mb-1">
-	Calibrate
-      </button>  
+        Calibrate
+      </button>
     </div>
 
     <input id="el_ws_url" type="hidden" value="{{ws_url}}">
@@ -98,9 +79,9 @@
 
     <nav class="nav nav-pills flex-column flex-sm-row mb-3">
       <a class="flex-sm-fill text-sm-center nav-link" href="/">Menu</a>
-      <a class="flex-sm-fill text-sm-center nav-link active" href="joystick.html">Joystick</a>
+      <a class="flex-sm-fill text-sm-center nav-link" href="joystick.html">Joystick</a>
       <a class="flex-sm-fill text-sm-center nav-link" href="accelerometer.html">Accelerometer</a>
-      <a class="flex-sm-fill text-sm-center nav-link" href="gamepad.html">Gamepad</a>
+      <a class="flex-sm-fill text-sm-center nav-link active" href="gamepad.html">Gamepad</a>
     </nav>
 
   </body>

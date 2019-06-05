@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import os
 import json
+import traceback
 
 robo = None
 
@@ -11,9 +12,11 @@ lastSeen = 0
 delay = 200
 
 
+
 async def runserver(websocket, path):
     global actSID
     global lastSeen
+    calDone = 10;
     assert robo, 'robo instance needed!'
     while True:
         data = await websocket.recv()
@@ -25,9 +28,11 @@ async def runserver(websocket, path):
             tempSID = data_json['sid']
             forward = data_json['forward']
             turn = data_json['turn']
+            calibrate = data_json['pressed']
             sitetime = int(data_json['time'])
             comptime = time.time() * 1000
             tower = 0
+            calDone-=1
             if actSID == "localhost" or lastSeen + 10 < time.time():
                 print("new User")
                 actSID = data_json['sid']
@@ -37,12 +42,15 @@ async def runserver(websocket, path):
                 if turn != 0 or forward != 0:
                     lastSeen = time.time()
                 allowed = True
-            if comptime < sitetime + abs(delay) and allowed:
+            if calibrate and allowed and (calDone <1):
+                print("Calibrate allowed")
+                robo.calibrate()
+                calDone = 15
+            elif comptime < sitetime + abs(delay) and allowed:
                 print("Moving allowed. Will call robo.move")
                 robo.move(forward, turn, tower)
         except Exception as e:
-            print("Exception: %s" % e)
-
+            print("Exception: %s %s"%(e,traceback.format_exc()))
 
 def initwebserver(robo_inst, ip, port):
 

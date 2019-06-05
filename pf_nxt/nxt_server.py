@@ -32,8 +32,14 @@ class NxtServer(object):
                 forward = data_json['forward']
                 turn = data_json['turn']
                 tower = data_json['tower']
-                print('Got valid data, moving...', data_json)
-                self.robo.move(forward, turn, tower)
+                calibrate = data_json['pressed']
+                print("cal:"+calibrate)
+                if(calibrate):
+                    print("Calibrating")
+                    self.robo.calibrate()
+                else:
+                    print('Got valid data, moving...', data_json)
+                    self.robo.move(forward, turn, tower)
             except Exception as e:
                 # print('bad data or something', data)
                 print(e)
