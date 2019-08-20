@@ -87,13 +87,23 @@ if __name__ == '__main__':
         action="store_true"
     )
 
+    parser.add_argument(
+        '-d',
+        '--dryrun',
+        help='Do not actually run robo, but do dryrun instead',
+        default=False,
+        action="store_true"
+    )
+
+
     args = parser.parse_args()
 
     # Change baddr and pin for your robot
     robo = ScoutRobo(
         baddr=args.baddr,
         pin=args.secretpin,
-        method=args.method
+        method=args.method,
+        dryrun=args.dryrun
     )
     print('Robo initialized')
     print("ARGUMENTS:", str(args))

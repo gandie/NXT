@@ -23,13 +23,19 @@ class ScoutRobo(object):
     or usb connection.
     '''
 
-    def __init__(self, baddr, pin, direct=False, method='bluetooth'):
+    def __init__(self, baddr, pin, direct=False, method='bluetooth', dryrun=False):
         '''
         initialize robot. by default robot is found using bluetooth,
         remember to install bluetooth lib before usage!
         :param baddr: The bluetooth mac address
         :param pin: The pin to ensure the connection
         '''
+
+        self.dryrun = dryrun
+
+        if self.dryrun:
+            print('Running in dryrun mode, will NOT initialize!')
+            return
 
         if method == 'bluetooth':
             # Pair with nxt via bluetooth before connecting
@@ -86,6 +92,10 @@ class ScoutRobo(object):
         turn steering motor to extreme positions and calculate middle position
         from both end positions
         '''
+
+        if self.dryrun:
+            print('Running in dryrun mode, will NOT calibrate!')
+            return
 
         self.calibrating = True
         print('calibrating...')
@@ -187,6 +197,10 @@ class ScoutRobo(object):
         '''
 
         print('Got args forward: %s turn: %s' % (forward, turn))
+        if self.dryrun:
+            print('Running in dryrun mode, will NOT move!')
+            return
+
         # abort if values out of range
         if abs(forward) > 1 or abs(turn) > 1:
             return
