@@ -9,7 +9,6 @@ from nxt.locator import Method, find_one_brick
 import time
 
 from pf_nxt.nxt_player import Nxt_Player
-from pf_nxt.nxt_pad import PadController
 from pf_nxt.nxt_autopilot import AutoPilot
 from pf_nxt.nxt_pair import Pair
 
