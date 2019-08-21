@@ -10,6 +10,14 @@ Featured ways to control robot:
 
 # Installation
 
+## Requirements
+
+Install following debain packages:
+
+```bash
+sudo apt-get install libbluetooth-dev python3-virtualenv
+```
+
 ## Beginners Guide
 
 + Download repo
